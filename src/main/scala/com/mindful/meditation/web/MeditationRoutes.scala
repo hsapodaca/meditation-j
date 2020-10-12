@@ -1,14 +1,13 @@
-package com.mindfulness.meditation.web
+package com.mindful.meditation.web
 
-
-import cats.implicits._
 import cats.effect.Sync
-import com.mindfulness.meditation.{HelloWorld, Jokes}
+import cats.implicits._
+import com.mindful.meditation.{HelloWorld, Jokes}
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 object MeditationRoutes {
 
-  def jokeRoutes[F[_] : Sync](J: Jokes[F]): HttpRoutes[F] = {
+  def jokeRoutes[F[_]: Sync](J: Jokes[F]): HttpRoutes[F] = {
     val dsl = new Http4sDsl[F] {}
     import dsl._
     HttpRoutes.of[F] {
@@ -20,7 +19,7 @@ object MeditationRoutes {
     }
   }
 
-  def helloWorldRoutes[F[_] : Sync](H: HelloWorld[F]): HttpRoutes[F] = {
+  def helloWorldRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
     val dsl = new Http4sDsl[F] {}
     import dsl._
     HttpRoutes.of[F] {

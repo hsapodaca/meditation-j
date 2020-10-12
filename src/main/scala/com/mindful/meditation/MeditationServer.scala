@@ -1,8 +1,8 @@
-package com.mindfulness.meditation
+package com.mindful.meditation
 
 import cats.effect.{ConcurrentEffect, ContextShift, Timer}
 import cats.implicits._
-import com.mindfulness.meditation.web.MeditationRoutes
+import com.mindful.meditation.web.MeditationRoutes
 import fs2.Stream
 import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.implicits._
@@ -13,7 +13,10 @@ import scala.concurrent.ExecutionContext.global
 
 object MeditationServer {
 
-  def stream[F[_] : ConcurrentEffect](implicit T: Timer[F], C: ContextShift[F]): Stream[F, Nothing] = {
+  def stream[F[_]: ConcurrentEffect](implicit
+      T: Timer[F],
+      C: ContextShift[F]
+  ): Stream[F, Nothing] = {
     for {
       client <- BlazeClientBuilder[F](global).stream
       helloWorldAlg = HelloWorld.impl[F]
@@ -24,17 +27,20 @@ object MeditationServer {
       // want to extract a segments not checked
       // in the underlying routes.
       httpApp = (
-        MeditationRoutes.helloWorldRoutes[F](helloWorldAlg) <+>
-          MeditationRoutes.jokeRoutes[F](jokeAlg)
-        ).orNotFound
+          MeditationRoutes.helloWorldRoutes[F](helloWorldAlg) <+>
+            MeditationRoutes.jokeRoutes[F](jokeAlg)
+      ).orNotFound
 
       // With Middlewares in place
       finalHttpApp = Logger.httpApp(true, true)(httpApp)
 
-      exitCode <- BlazeServerBuilder[F](global)
-        .bindHttp(8080, "0.0.0.0")
-        .withHttpApp(finalHttpApp)
-        .serve
+      exitCode <-
+        BlazeServerBuilder[F](global)
+        // scalastyle:off
+          .bindHttp(8080, "0.0.0.0")
+          // scalastyle:on
+          .withHttpApp(finalHttpApp)
+          .serve
     } yield exitCode
   }.drain
 }

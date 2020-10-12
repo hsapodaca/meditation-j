@@ -1,4 +1,4 @@
-package com.mindfulness.meditation
+package com.mindful.meditation
 
 import cats.Applicative
 import cats.implicits._
@@ -13,10 +13,11 @@ trait HelloWorld[F[_]] {
 object HelloWorld {
   implicit def apply[F[_]](implicit ev: HelloWorld[F]): HelloWorld[F] = ev
 
-  def impl[F[_] : Applicative]: HelloWorld[F] = new HelloWorld[F] {
-    def hello(n: HelloWorld.Name): F[HelloWorld.Greeting] =
-      Greeting("Hello, " + n.name).pure[F]
-  }
+  def impl[F[_]: Applicative]: HelloWorld[F] =
+    new HelloWorld[F] {
+      def hello(n: HelloWorld.Name): F[HelloWorld.Greeting] =
+        Greeting("Hello, " + n.name).pure[F]
+    }
 
   final case class Name(name: String) extends AnyVal
 
@@ -29,12 +30,14 @@ object HelloWorld {
 
   object Greeting {
     implicit val greetingEncoder: Encoder[Greeting] = new Encoder[Greeting] {
-      final def apply(a: Greeting): Json = Json.obj(
-        ("message", Json.fromString(a.greeting)),
-      )
+      final def apply(a: Greeting): Json =
+        Json.obj(
+          ("message", Json.fromString(a.greeting))
+        )
     }
 
-    implicit def greetingEntityEncoder[F[_] : Applicative]: EntityEncoder[F, Greeting] =
+    implicit def greetingEntityEncoder[F[_]: Applicative]
+        : EntityEncoder[F, Greeting] =
       jsonEncoderOf[F, Greeting]
   }
 }
