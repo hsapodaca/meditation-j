@@ -1,0 +1,19 @@
+version: '3'
+
+volumes:
+  database_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=meditation-service
+      - POSTGRES_PASSWORD=meditation
+      - POSTGRES_DB=meditation-service
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql/001_create_database_tables.sql:/docker-entrypoint-initdb.d/001_create_database_tables.sql
