@@ -1,7 +1,6 @@
-package com.mindful.meditation
+package com.mindful.meditation.service
 
 import cats.effect.IO
-import com.mindful.meditation.service.ReadinessCheck
 import com.mindful.meditation.web.MeditationRoutes
 import org.http4s._
 import org.http4s.implicits._
