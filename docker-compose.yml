@@ -16,4 +16,4 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgresql/flyway/scripts/migration/001_create_database_tables.sql:/docker-entrypoint-initdb.d/001_create_database_tables.sql
+      - ./postgresql/scripts/migration/001_create_database_tables.sql:/docker-entrypoint-initdb.d/001_create_database_tables.sql

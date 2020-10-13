@@ -2,6 +2,7 @@ package com.mindful.meditation
 
 import cats.effect.{ConcurrentEffect, ContextShift, Timer}
 import cats.implicits._
+import com.mindful.meditation.service.{Meditations, ReadinessCheck, Therapists}
 import com.mindful.meditation.web.MeditationRoutes
 import fs2.Stream
 import org.http4s.client.blaze.BlazeClientBuilder
@@ -19,16 +20,18 @@ object MeditationServer {
   ): Stream[F, Nothing] = {
     for {
       client <- BlazeClientBuilder[F](global).stream
-      helloWorldAlg = ReadinessCheck.impl[F]
-      jokeAlg = Jokes.impl[F](client)
+      readinessCheckAlg = ReadinessCheck.impl[F]
+      meditationsAlg = Meditations.impl[F](client)
+      therapistsAlg = Therapists.impl[F](client)
 
       // Combine Service Routes into an HttpApp.
       // Can also be done via a Router if you
-      // want to extract a segments not checked
+      // want to extract segments not checked
       // in the underlying routes.
       httpApp = (
-          MeditationRoutes.readinessCheckRoutes[F](helloWorldAlg) <+>
-            MeditationRoutes.jokeRoutes[F](jokeAlg)
+          MeditationRoutes.readinessCheckRoutes[F](readinessCheckAlg) <+>
+            MeditationRoutes.meditationRoutes[F](meditationsAlg) <+>
+            MeditationRoutes.therapistRoutes[F](therapistsAlg)
       ).orNotFound
 
       // With Middlewares in place
@@ -36,9 +39,7 @@ object MeditationServer {
 
       exitCode <-
         BlazeServerBuilder[F](global)
-        // scalastyle:off
           .bindHttp(8080, "0.0.0.0")
-          // scalastyle:on
           .withHttpApp(finalHttpApp)
           .serve
     } yield exitCode

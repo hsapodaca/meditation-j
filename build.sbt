@@ -4,6 +4,9 @@ lazy val root = (project in file("."))
     name := "meditation",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.13.2",
+    coverageEnabled := true,
+    coverageMinimum := 80,
+    coverageFailOnMinimum := true,
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
       "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
@@ -15,11 +18,9 @@ lazy val root = (project in file("."))
       // Postgres database
       "org.tpolecat" %% "doobie-core" % DoobieVersion,
       "org.tpolecat" %% "doobie-postgres" % DoobieVersion,
-      "com.typesafe" % "config" % "1.4.0"
+      "com.typesafe" % "config" % "1.4.0",
+      "org.flywaydb" % "flyway-core" % FlywayVersion
     ),
-    coverageEnabled := true,
-    coverageMinimum := 80,
-    coverageFailOnMinimum := true,
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
   )
@@ -28,6 +29,7 @@ val CirceVersion = "0.13.0"
 val Specs2Version = "4.10.0"
 val LogbackVersion = "1.2.3"
 val DoobieVersion = "0.9.0"
+val FlywayVersion = "7.0.2"
 
 scalacOptions ++= Seq(
   "-deprecation",

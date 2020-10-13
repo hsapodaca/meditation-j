@@ -1,11 +1,11 @@
-package com.mindful.meditation
+package com.mindful.meditation.service
 
 import cats.Applicative
 import cats.implicits._
+import com.typesafe.config.{Config, ConfigFactory}
 import io.circe.{Encoder, Json}
 import org.http4s.EntityEncoder
 import org.http4s.circe._
-import com.typesafe.config.{Config, ConfigFactory}
 
 trait ReadinessCheck[F[_]] {
   def check(): F[ReadinessCheck.ReadinessCheckResponse]
