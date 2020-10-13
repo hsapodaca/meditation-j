@@ -13,6 +13,9 @@ class ConfigSpec extends org.specs2.mutable.Specification {
     "load db config" >> {
       loadDatabaseConfig()
     }
+    "load server config" >> {
+      loadServerConfig()
+    }
   }
 
   private[this] def loadDefaultMeditation(): MatchResult[String] =
@@ -25,4 +28,7 @@ class ConfigSpec extends org.specs2.mutable.Specification {
 
   private[this] def loadDatabaseConfig(): MatchResult[String] =
     config.databaseConnection.user must not beEmpty
+
+  private[this] def loadServerConfig(): MatchResult[String] =
+    config.server.host must not beEmpty
 }

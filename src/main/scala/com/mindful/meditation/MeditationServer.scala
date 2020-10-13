@@ -39,7 +39,7 @@ object MeditationServer {
 
       exitCode <-
         BlazeServerBuilder[F](global)
-          .bindHttp(8080, "0.0.0.0")
+          .bindHttp(config.server.port, config.server.host)
           .withHttpApp(finalHttpApp)
           .serve
     } yield exitCode
