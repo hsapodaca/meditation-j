@@ -1,3 +1,10 @@
+lazy val Http4sVersion = "0.21.5"
+lazy val CirceVersion = "0.13.0"
+lazy val Specs2Version = "4.10.0"
+lazy val LogbackVersion = "1.2.3"
+lazy val DoobieVersion = "0.9.0"
+lazy val FlywayVersion = "7.0.2"
+
 lazy val root = (project in file("."))
   .settings(
     organization := "com.mindful",
@@ -24,12 +31,6 @@ lazy val root = (project in file("."))
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
   )
-val Http4sVersion = "0.21.5"
-val CirceVersion = "0.13.0"
-val Specs2Version = "4.10.0"
-val LogbackVersion = "1.2.3"
-val DoobieVersion = "0.9.0"
-val FlywayVersion = "7.0.2"
 
 scalacOptions ++= Seq(
   "-deprecation",
