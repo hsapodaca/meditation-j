@@ -1,6 +1,6 @@
 lazy val root = (project in file("."))
   .settings(
-    organization := "com.mindfulness",
+    organization := "com.mindful",
     name := "meditation",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.13.2",
@@ -14,7 +14,8 @@ lazy val root = (project in file("."))
       "ch.qos.logback" % "logback-classic" % LogbackVersion,
       // Postgres database
       "org.tpolecat" %% "doobie-core" % DoobieVersion,
-      "org.tpolecat" %% "doobie-postgres" % DoobieVersion
+      "org.tpolecat" %% "doobie-postgres" % DoobieVersion,
+      "com.typesafe" % "config" % "1.4.0"
     ),
     coverageEnabled := true,
     coverageMinimum := 80,

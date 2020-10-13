@@ -2,7 +2,7 @@ package com.mindful.meditation.web
 
 import cats.effect.Sync
 import cats.implicits._
-import com.mindful.meditation.{HelloWorld, Jokes}
+import com.mindful.meditation.{ReadinessCheck, Jokes}
 import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 object MeditationRoutes {
@@ -19,14 +19,14 @@ object MeditationRoutes {
     }
   }
 
-  def helloWorldRoutes[F[_]: Sync](H: HelloWorld[F]): HttpRoutes[F] = {
+  def readinessCheckRoutes[F[_]: Sync](H: ReadinessCheck[F]): HttpRoutes[F] = {
     val dsl = new Http4sDsl[F] {}
     import dsl._
     HttpRoutes.of[F] {
-      case GET -> Root / "hello" / name =>
+      case GET -> Root / "status" =>
         for {
-          greeting <- H.hello(HelloWorld.Name(name))
-          resp <- Ok(greeting)
+          res <- H.check()
+          resp <- Ok(res)
         } yield resp
     }
   }

@@ -19,7 +19,7 @@ object MeditationServer {
   ): Stream[F, Nothing] = {
     for {
       client <- BlazeClientBuilder[F](global).stream
-      helloWorldAlg = HelloWorld.impl[F]
+      helloWorldAlg = ReadinessCheck.impl[F]
       jokeAlg = Jokes.impl[F](client)
 
       // Combine Service Routes into an HttpApp.
@@ -27,7 +27,7 @@ object MeditationServer {
       // want to extract a segments not checked
       // in the underlying routes.
       httpApp = (
-          MeditationRoutes.helloWorldRoutes[F](helloWorldAlg) <+>
+          MeditationRoutes.readinessCheckRoutes[F](helloWorldAlg) <+>
             MeditationRoutes.jokeRoutes[F](jokeAlg)
       ).orNotFound
 
