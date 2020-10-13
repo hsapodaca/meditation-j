@@ -4,6 +4,7 @@ lazy val Specs2Version = "4.10.0"
 lazy val LogbackVersion = "1.2.3"
 lazy val DoobieVersion = "0.9.0"
 lazy val FlywayVersion = "7.0.2"
+lazy val PureConfigVersion = "0.14.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,11 +26,11 @@ lazy val root = (project in file("."))
       // Postgres database
       "org.tpolecat" %% "doobie-core" % DoobieVersion,
       "org.tpolecat" %% "doobie-postgres" % DoobieVersion,
-      "com.typesafe" % "config" % "1.4.0",
+      "org.tpolecat" %% "doobie-hikari" % DoobieVersion,
+      "com.github.pureconfig" %% "pureconfig" % PureConfigVersion,
+      "com.github.pureconfig" %% "pureconfig-cats-effect" % PureConfigVersion,
       "org.flywaydb" % "flyway-core" % FlywayVersion
-    ),
-    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
-    addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+    )
   )
 
 scalacOptions ++= Seq(
