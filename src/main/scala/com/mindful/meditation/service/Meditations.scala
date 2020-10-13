@@ -11,6 +11,7 @@ import org.http4s.client.Client
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.implicits._
 import org.http4s.{EntityDecoder, EntityEncoder}
+import com.mindful.meditation.repository._
 
 trait Meditations[F[_]] {
   def get: F[Meditations.Meditation]

@@ -1,6 +1,6 @@
 package com.mindful.meditation
 
-import cats.effect.{ConcurrentEffect, ContextShift, Timer}
+import cats.effect.{ConcurrentEffect, ContextShift, IO, Timer}
 import cats.implicits._
 import com.mindful.meditation.service.{Meditations, ReadinessCheck, Therapists}
 import com.mindful.meditation.web.MeditationRoutes

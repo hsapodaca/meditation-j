@@ -11,7 +11,6 @@ create index entities_type_index on entities(type);
 create table scripts(
    id int primary key     not null,
    entity_id              int,
-   script_type            varchar(30) not null,
    script                 text,
    constraint fk_scripts_therapist
       foreign key(entity_id)

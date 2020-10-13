@@ -12,7 +12,8 @@ package object config {
       driver: String,
       url: String,
       user: String,
-      password: String
+      password: String,
+      poolSize: Int
   )
 
   case class Server(host: String, port: Int)
