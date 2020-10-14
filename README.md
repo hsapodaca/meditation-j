@@ -4,9 +4,9 @@ J is someone who has helped me once, when it counted. If you are struggling to f
 
 ## Summary
 
-J is a set of API endpoints for managing and interacting with therapists and interaction scripts.
+J is a set of API endpoints for managing and interacting interaction scripts for various virtual therapists reciting a meditation script.
 
-For more information on usage, please see open-api.yml.
+For more information on usage, endpoints, please see open-api.yml.
 
 ## Getting Started
 
@@ -20,16 +20,15 @@ Run tests with
     
 ## Project overview
 
-- db (database queries)
-- model (data models)
-- repository (of entities)
-
-- service (business logic)
-
-- web (endpoints, routes)
+- config (application configuration, database config, server config)
+- repository (database queries)
+- service (service layer between repositories and endpoints, business logic)
+- alg (business logic and data models)
+- endpoint (web layer, contains routes configuring the endpoints)
+- MeditationServer - IOApp object, entrypoint
 
 Also see:
 
 - build.sbt for the specifics on dependencies used
-- sql directory for the database schema
+- postgresql directory for the database schema, flyway scripts
 - open-api.yml for the endpoints available

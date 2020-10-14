@@ -3,14 +3,14 @@ package io.github.hsapodaca.endpoint
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
 import cats.implicits._
 import doobie.util.ExecutionContexts
-import io.github.hsapodaca.alg.{MeditationValidation}
+import io.github.hsapodaca.alg.MeditationValidation
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
-import io.github.hsapodaca.repository.{MeditationRepository}
+import io.github.hsapodaca.repository.MeditationRepository
 import io.github.hsapodaca.service.{MeditationService, ReadinessCheckService}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.blaze.BlazeServerBuilder
-import org.http4s.server.{Router, Server => H4Server}
+import org.http4s.server.{Server => H4Server}
 object MeditationServer extends IOApp {
 
   def createServer[F[_]: ContextShift: ConcurrentEffect: Timer]
