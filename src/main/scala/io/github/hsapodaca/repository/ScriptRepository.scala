@@ -11,30 +11,35 @@ import io.github.hsapodaca.alg.{Script, ScriptRepositoryAlg}
 class ScriptRepository[F[_]](val xa: Transactor[F])(implicit
     ev: Bracket[F, Throwable]
 ) extends ScriptRepositoryAlg[F] {
-  override def getScript(
-      id: Long
-  ): F[Option[Script]] = {
+  override def get(id: Long): F[Option[Script]] = {
     sql"SELECT id, entity_id, script FROM scripts WHERE id = $id"
       .query[Script]
       .option
       .transact(xa)
   }
 
-  override def getScripts: F[List[Script]] = {
+  override def getByEntityId(entity_id: Long): F[Option[Script]] = {
+    sql"SELECT id, entity_id, script FROM scripts WHERE entity_id = $entity_id"
+      .query[Script]
+      .option
+      .transact(xa)
+  }
+
+  override def list: F[List[Script]] = {
     sql"SELECT id, entity_id, script FROM scripts"
       .query[Script]
       .to[List]
       .transact(xa)
   }
 
-  override def createScript(script: Script): F[Script] = {
+  override def create(script: Script): F[Script] = {
     sql"INSERT INTO script (entity_id, script) VALUES (${script.entityId}, ${script.script})".update
       .withUniqueGeneratedKeys[Long]("id")
       .map(id => script.copy(id = Some(id)))
       .transact(xa)
   }
 
-  override def updateScript(
+  override def update(
       script: Script
   ): F[Option[Script]] =
     OptionT
@@ -46,7 +51,7 @@ class ScriptRepository[F[_]](val xa: Transactor[F])(implicit
       .value
       .transact(xa)
 
-  override def deleteScript(id: Long): F[Int] = {
+  override def delete(id: Long): F[Int] = {
     sql"DELETE FROM script WHERE id = $id".update.run.transact(xa)
   }
 }

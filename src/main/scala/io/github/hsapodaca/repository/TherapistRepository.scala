@@ -12,10 +12,15 @@ class TherapistRepository[F[_]](val xa: Transactor[F])(implicit
     ev: Bracket[F, Throwable]
 ) extends TherapistRepositoryAlg[F] {
 
-  override def get(
-      id: Long
-  ): F[Option[Therapist]] = {
+  override def get(id: Long): F[Option[Therapist]] = {
     sql"SELECT id, entity_name, summary, type FROM entities WHERE id = $id and type = 'therapist'"
+      .query[Therapist]
+      .option
+      .transact(xa)
+  }
+
+  override def get(name: String): F[Option[Therapist]] = {
+    sql"SELECT id, entity_name, summary, type FROM entities WHERE entity_name = $name and type = 'therapist'"
       .query[Therapist]
       .option
       .transact(xa)

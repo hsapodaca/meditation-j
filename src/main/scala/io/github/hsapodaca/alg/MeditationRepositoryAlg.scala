@@ -4,7 +4,9 @@ trait MeditationRepositoryAlg[F[_]] {
 
   def get(id: Long): F[Option[Meditation]]
 
-  def get: F[List[Meditation]]
+  def get(name: String): F[Option[Meditation]]
+
+  def list(limit: Int, offset: Int): F[List[Meditation]]
 
   def create(entity: Meditation): F[Meditation]
 

@@ -7,6 +7,7 @@ package object config {
 
   case class Entity(name: String, summary: String, script: String)
 
+
   case class DatabaseConnection(
       driver: String,
       url: String,
@@ -21,7 +22,10 @@ package object config {
     ConfigSource.default.at("therapist.default").loadOrThrow[Entity]
   val defaultMeditation =
     ConfigSource.default.at("meditation.default").loadOrThrow[Entity]
-
+  val meditationSearchLimitDefault =
+    ConfigSource.default.at("meditation.search.limit.default").loadOrThrow[Int]
+  val therapistSearchLimitDefault =
+    ConfigSource.default.at("therapist.search.limit.default").loadOrThrow[Int]
   val databaseConnection =
     ConfigSource.default.at("database").loadOrThrow[DatabaseConnection]
 

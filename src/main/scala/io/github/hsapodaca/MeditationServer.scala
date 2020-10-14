@@ -3,9 +3,10 @@ package io.github.hsapodaca.endpoint
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
 import cats.implicits._
 import doobie.util.ExecutionContexts
+import io.github.hsapodaca.alg.{MeditationValidation}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
-import io.github.hsapodaca.repository.MeditationRepository
+import io.github.hsapodaca.repository.{MeditationRepository}
 import io.github.hsapodaca.service.{MeditationService, ReadinessCheckService}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.blaze.BlazeServerBuilder
@@ -25,8 +26,9 @@ object MeditationServer extends IOApp {
         Blocker.liftExecutionContext(txnEc)
       )
       meditationRepo = MeditationRepository[F](xa)
+      meditationValidation = MeditationValidation[F](meditationRepo)
       readinessCheckAlg = ReadinessCheckService.impl[F]
-      meditationsAlg = MeditationService[F](meditationRepo)
+      meditationsAlg = MeditationService[F](meditationRepo, meditationValidation)
       httpApp = (
         ReadinessCheckEndpoints.endpoints[F](readinessCheckAlg) <+>
         MeditationEndpoints.endpoints[F](meditationsAlg)

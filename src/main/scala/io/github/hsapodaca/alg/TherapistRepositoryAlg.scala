@@ -4,6 +4,8 @@ trait TherapistRepositoryAlg[F[_]] {
 
   def get(id: Long): F[Option[Therapist]]
 
+  def get(name: String): F[Option[Therapist]]
+
   def get: F[List[Therapist]]
 
   def create(entity: Therapist): F[Therapist]

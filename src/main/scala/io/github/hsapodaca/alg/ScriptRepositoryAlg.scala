@@ -2,17 +2,17 @@ package io.github.hsapodaca.alg
 
 trait ScriptRepositoryAlg[F[_]] {
 
-  def getScript(
-      id: Long
-  ): F[Option[Script]]
+  def get(id: Long): F[Option[Script]]
 
-  def getScripts: F[List[Script]]
+  def getByEntityId(entity_id: Long): F[Option[Script]]
 
-  def createScript(script: Script): F[Script]
+  def list: F[List[Script]]
 
-  def updateScript(
+  def create(script: Script): F[Script]
+
+  def update(
       script: Script
   ): F[Option[Script]]
 
-  def deleteScript(id: Long): F[Int]
+  def delete(id: Long): F[Int]
 }

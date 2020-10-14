@@ -12,17 +12,22 @@ class MeditationRepository[F[_]](val xa: Transactor[F])(implicit
     ev: Bracket[F, Throwable]
 ) extends MeditationRepositoryAlg[F] {
 
-  override def get(
-      id: Long
-  ): F[Option[Meditation]] = {
+  override def get(id: Long): F[Option[Meditation]] = {
     sql"SELECT id, entity_name, summary, type FROM entities WHERE id = $id and type = 'meditation'"
       .query[Meditation]
       .option
       .transact(xa)
   }
 
-  override def get: F[List[Meditation]] = {
-    sql"SELECT id, entity_name, summary, type FROM entities where type = 'meditations'"
+  override def get(name: String): F[Option[Meditation]] = {
+    sql"SELECT id, entity_name, summary, type FROM entities WHERE entity_name = $name and type = 'meditation'"
+      .query[Meditation]
+      .option
+      .transact(xa)
+  }
+
+  override def list(limit: Int, offset: Int): F[List[Meditation]] = {
+    sql"SELECT id, entity_name, summary, type FROM entities where type = 'meditations' LIMIT $limit OFFSET $offset"
       .query[Meditation]
       .to[List]
       .transact(xa)

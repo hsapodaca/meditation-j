@@ -3,7 +3,7 @@ info:
   version: 1.0.0
   title: Meditation
 paths:
-  /therapy/meditations:
+  /meditations:
     get:
       summary: List all meditations
       operationId: getMeditations
@@ -46,7 +46,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /therapy/meditations/{meditationId}:
+  /meditations/{meditationId}:
     get:
       summary: Info for a specific meditation
       operationId: getMeditationById

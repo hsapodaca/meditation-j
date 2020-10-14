@@ -2,24 +2,27 @@ package io.github.hsapodaca.service
 
 import cats._
 import cats.data.EitherT
-import io.github.hsapodaca.alg.{Meditation, MeditationAlreadyExistsError, MeditationNotFoundError, MeditationRepositoryAlg}
+import io.github.hsapodaca.alg.{Meditation, MeditationAlreadyExistsError, MeditationNotFoundError, MeditationRepositoryAlg, MeditationValidationAlg}
 
-class MeditationService[F[_]](repository: MeditationRepositoryAlg[F]) {
-  def create(Meditation: Meditation)(implicit
-      M: Monad[F]
+class MeditationService[F[_]](
+    repository: MeditationRepositoryAlg[F],
+    validation: MeditationValidationAlg[F]
+) {
+  def create(entity: Meditation)(implicit
+                                 M: Monad[F]
   ): EitherT[F, MeditationAlreadyExistsError, Meditation] =
     for {
-      //_ <- validation.doesNotExist(Meditation)
-      saved <- EitherT.liftF(repository.create(Meditation))
+      _ <- validation.doesNotExist(entity)
+      saved <- EitherT.liftF(repository.create(entity))
     } yield saved
 
-  def update(Meditation: Meditation)(implicit
+  def update(entity: Meditation)(implicit
       M: Monad[F]
   ): EitherT[F, MeditationNotFoundError.type, Meditation] =
     for {
-      //_ <- validation.exists(Meditation.id)
+      _ <- validation.exists(entity.id)
       saved <- EitherT.fromOptionF(
-        repository.update(Meditation),
+        repository.update(entity),
         MeditationNotFoundError
       )
     } yield saved
@@ -29,14 +32,18 @@ class MeditationService[F[_]](repository: MeditationRepositoryAlg[F]) {
   ): EitherT[F, MeditationNotFoundError.type, Meditation] =
     EitherT.fromOptionF(repository.get(id), MeditationNotFoundError)
 
-  def delete(id: Long)(implicit F: Functor[F]): F[Int] = {
+  def delete(id: Long): F[Int] = {
     repository.delete(id)
   }
 
+  def list(pageSize: Int, offset: Int): F[List[Meditation]] = {
+    repository.list(pageSize, offset)
+  }
 }
 object MeditationService {
   def apply[F[_]](
-      repository: MeditationRepositoryAlg[F]
+      repository: MeditationRepositoryAlg[F],
+      validation: MeditationValidationAlg[F]
   ): MeditationService[F] =
-    new MeditationService[F](repository)
+    new MeditationService[F](repository, validation)
 }
