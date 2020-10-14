@@ -1,24 +1,20 @@
-package com.mindful.meditation.service
+package io.github.hsapodaca.service
 
 import cats.Applicative
 import cats.implicits._
-import com.mindful.meditation.config
+import io.github.hsapodaca.config
 import io.circe.{Encoder, Json}
 import org.http4s.EntityEncoder
 import org.http4s.circe._
 
-trait ReadinessCheck[F[_]] {
-  def check(): F[ReadinessCheck.ReadinessCheckResponse]
+trait ReadinessCheckService[F[_]] {
+  def check(): F[ReadinessCheckService.ReadinessCheckResponse]
 }
 
-object ReadinessCheck {
-  implicit def apply[F[_]](implicit ev: ReadinessCheck[F]): ReadinessCheck[F] = ev
+object ReadinessCheckService {
+  implicit def apply[F[_]](implicit ev: ReadinessCheckService[F]): ReadinessCheckService[F] = ev
 
-  def impl[F[_]: Applicative]: ReadinessCheck[F] =
-    new ReadinessCheck[F] {
-      def check(): F[ReadinessCheck.ReadinessCheckResponse] =
-        ReadinessCheckResponse().pure[F]
-    }
+  def impl[F[_]: Applicative]: ReadinessCheckService[F] = () => ReadinessCheckResponse().pure[F]
 
   final case class Name(name: String) extends AnyVal
 

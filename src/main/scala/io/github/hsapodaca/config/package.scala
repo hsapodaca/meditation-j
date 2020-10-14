@@ -1,6 +1,5 @@
-package com.mindful.meditation
+package io.github.hsapodaca
 
-import cats.effect.{IO, Resource}
 import pureconfig._
 import pureconfig.generic.auto._
 
