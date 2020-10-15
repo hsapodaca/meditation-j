@@ -5,7 +5,7 @@ create TABLE entities(
   summary TEXT not null,
   type VARCHAR(30) not null,
   script text not null,
-  UNIQUE(entity_name, type)
+  UNIQUE(entity_name)
 );
 create INDEX entities_type_index ON entities(type);
 

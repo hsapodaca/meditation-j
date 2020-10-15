@@ -1,7 +1,6 @@
 package io.github.hsapodaca.alg
 
 import enumeratum._
-import io.github.hsapodaca.config
 
 // Database
 case class Entity(

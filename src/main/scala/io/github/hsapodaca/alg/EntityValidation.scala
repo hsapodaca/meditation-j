@@ -12,8 +12,8 @@ class EntityValidation[F[_]: Applicative](
   ): EitherT[F, EntityAlreadyExistsError, Unit] =
     EitherT {
       repository.get(entity.entityName) map {
-        case Some(_) => Right(())
-        case _       => Left(EntityAlreadyExistsError(entity))
+        case Some(_) => Left(EntityAlreadyExistsError(entity))
+        case _       => Right(())
       }
     }
 

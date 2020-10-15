@@ -55,13 +55,13 @@ class EntityEndpoints[F[_]: Sync] {
           resp <- Ok(res.asJson)
         } yield resp
 
-      case DELETE -> Root / "v1" / "entity" / LongVar(id) =>
+      case DELETE -> Root / "v1" / "entities" / LongVar(id) =>
         for {
           _ <- entityService.delete(id)
           resp <- Ok()
         } yield resp
 
-      case req @ POST -> Root / "v1" / "entity" / LongVar(_) =>
+      case req @ POST -> Root / "v1" / "entities" =>
         val action = for {
           entity <- req.as[Entity]
           result <- entityService.create(entity).value
@@ -69,10 +69,10 @@ class EntityEndpoints[F[_]: Sync] {
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
           case Left(EntityAlreadyExistsError(m)) =>
-            NotFound(s"The entity ${m.entityName} already exists.")
+            Conflict(s"The entity ${m.entityName} already exists.")
         }
 
-      case req @ PUT -> Root / "v1" / "entity" / LongVar(_) =>
+      case req @ PUT -> Root / "v1" / "entities" / LongVar(_) =>
         val action = for {
           entity <- req.as[Entity]
           result <- entityService.update(entity).value
