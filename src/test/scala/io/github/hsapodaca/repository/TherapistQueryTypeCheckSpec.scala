@@ -27,7 +27,7 @@ class TherapistQueryTypeCheckSpec
 
   test("Typecheck therapist queries") {
     therapist.arbitrary.sample.map { t =>
-      check(select(t.id.get))
+      check(select(t.id.getOrElse(1L)))
       check(select(t.entityName))
       check(select(0, 0))
       check(select(10, 100))

@@ -8,7 +8,7 @@ CREATE TABLE entities(
 create index entities_type_index on entities(type);
 
 -- Scripts for the entities
-create table scripts(
+CREATE TABLE scripts(
    id           BIGSERIAL primary key     not null,
    entity_id    BIGSERIAL not null,
    script       text not null,
