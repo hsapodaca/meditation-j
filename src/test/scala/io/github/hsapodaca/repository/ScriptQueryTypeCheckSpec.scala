@@ -20,16 +20,14 @@ class ScriptQueryTypeCheckSpec
 
   private implicit val script = Arbitrary[Script] {
     for {
-      entityId <- Gen.posNum[Long]
       script <- arbitrary[String]
       id <- Gen.option(Gen.posNum[Long])
-    } yield Script(id, entityId, script)
+    } yield Script(id, script)
   }
 
   test("Type check script queries") {
     script.arbitrary.sample.map { s =>
       check(select(s.id.getOrElse(1L)))
-      check(select(s.entityId))
       check(select(0, 0))
       check(select(10, 100))
       s.id.foreach(id => check(ScriptSQL.updateValues(id, s)))

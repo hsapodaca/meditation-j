@@ -4,8 +4,6 @@ trait ScriptRepositoryAlg[F[_]] {
 
   def get(id: Long): F[Option[Script]]
 
-  def getByEntityId(entity_id: Long): F[Option[Script]]
-
   def list(limit: Int, offset: Int): F[List[Script]]
 
   def create(script: Script): F[Script]

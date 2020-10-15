@@ -22,7 +22,8 @@ class TherapistQueryTypeCheckSpec
       entityName <- Gen.nonEmptyListOf(Gen.asciiPrintableChar).map(_.mkString)
       summary <- arbitrary[String]
       id <- Gen.option(Gen.posNum[Long])
-    } yield Therapist(id, entityName, summary)
+      scriptId <- Gen.posNum[Long]
+    } yield Therapist(id, entityName, summary, scriptId)
   }
 
   test("Typecheck therapist queries") {

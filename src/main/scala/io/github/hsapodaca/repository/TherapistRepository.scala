@@ -12,21 +12,21 @@ private object TherapistSQL {
 
   def select(id: Long): Query0[Therapist] =
     sql"""
-    SELECT id, entity_name, summary
+    SELECT id, entity_name, summary, script_id
     FROM entities
     WHERE id = $id and type = 'therapist'
     """.query[Therapist]
 
   def select(name: String): Query0[Therapist] =
     sql"""
-    SELECT id, entity_name, summary
+    SELECT id, entity_name, summary, script_id
     FROM entities
     WHERE entity_name = $name and type = 'therapist'
     """.query[Therapist]
 
   def select(limit: Int, offset: Int): Query0[Therapist] =
     sql"""
-    SELECT id, entity_name, summary
+    SELECT id, entity_name, summary, script_id
     FROM entities
     WHERE type = 'therapist'
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
@@ -34,8 +34,8 @@ private object TherapistSQL {
 
   def insertValues(m: Therapist): Update0 =
     sql"""
-    INSERT INTO entities (entity_name, summary, type)
-    VALUES (${m.entityName}, ${m.summary}, 'therapist')
+    INSERT INTO entities (entity_name, summary, script_id, type)
+    VALUES (${m.entityName}, ${m.summary}, ${m.scriptId}, 'therapist')
     """.update
 
   def deleteFrom(id: Long): Update0 =

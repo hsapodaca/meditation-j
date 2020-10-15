@@ -22,7 +22,8 @@ class MeditationQueryTypeCheckSpec
       entityName <- Gen.nonEmptyListOf(Gen.asciiPrintableChar).map(_.mkString)
       summary <- arbitrary[String]
       id <- Gen.option(Gen.posNum[Long])
-    } yield Meditation(id, entityName, summary)
+      scriptId <- Gen.posNum[Long]
+    } yield Meditation(id, entityName, summary, scriptId)
   }
 
   test("Type check meditation queries") {

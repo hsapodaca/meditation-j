@@ -12,29 +12,22 @@ private object ScriptSQL {
 
   def select(id: Long): Query0[Script] =
     sql"""
-    SELECT id, entity_id, script 
+    SELECT id, script
     FROM scripts 
     WHERE id = $id
     """.query[Script]
 
-  def selectByEntityId(entity_id: Long): Query0[Script] =
-    sql"""
-    SELECT id, entity_id, script 
-    FROM scripts 
-    WHERE entity_id = $entity_id
-    """.query[Script]
-
   def select(limit: Int, offset: Int): Query0[Script] =
     sql"""
-    SELECT id, entity_id, script
+    SELECT id, script
     FROM scripts
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
     """.query[Script]
 
   def insertValues(s: Script): Update0 =
     sql"""
-    INSERT INTO scripts (entity_id, script)
-    VALUES (${s.entityId}, ${s.script})
+    INSERT INTO scripts (script)
+    VALUES (${s.script})
     """.update
 
   def deleteFrom(id: Long): Update0 =
@@ -46,7 +39,7 @@ private object ScriptSQL {
   def updateValues(id: Long, s: Script): Update0 =
     sql"""
     UPDATE scripts
-    SET entity_id = ${s.entityId}, script = ${s.script}
+    SET script = ${s.script}
     WHERE id = $id
     """.update
 }
@@ -58,9 +51,6 @@ class ScriptRepository[F[_]](val xa: Transactor[F])(implicit
   import ScriptSQL._
 
   override def get(id: Long): F[Option[Script]] = select(id).option.transact(xa)
-
-  override def getByEntityId(entity_id: Long): F[Option[Script]] =
-    selectByEntityId(entity_id).option.transact(xa)
 
   override def list(limit: Int, offset: Int): F[List[Script]] =
     select(limit, offset).to[List].transact(xa)

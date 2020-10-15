@@ -12,21 +12,21 @@ private object MeditationSQL {
 
   def select(id: Long): Query0[Meditation] =
     sql"""
-    SELECT id, entity_name, summary 
+    SELECT id, entity_name, summary, script_id
     FROM entities 
     WHERE id = $id and type = 'meditation'
     """.query[Meditation]
 
   def select(name: String): Query0[Meditation] =
     sql"""
-    SELECT id, entity_name, summary 
+    SELECT id, entity_name, summary, script_id
     FROM entities 
     WHERE entity_name = $name and type = 'meditation'
     """.query[Meditation]
 
   def select(limit: Int, offset: Int): Query0[Meditation] =
     sql"""
-    SELECT id, entity_name, summary 
+    SELECT id, entity_name, summary, script_id
     FROM entities 
     WHERE type = 'meditation'
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
@@ -34,8 +34,8 @@ private object MeditationSQL {
 
   def insertValues(m: Meditation): Update0 =
     sql"""
-    INSERT INTO entities (entity_name, summary, type)
-    VALUES (${m.entityName}, ${m.summary}, 'meditation')
+    INSERT INTO entities (entity_name, summary, type, script_id)
+    VALUES (${m.entityName}, ${m.summary}, 'meditation', ${m.scriptId})
     """.update
 
   def deleteFrom(id: Long): Update0 =
@@ -47,7 +47,7 @@ private object MeditationSQL {
   def updateValues(id: Long, m: Meditation): Update0 =
     sql"""
     UPDATE entities
-    SET entity_name = ${m.entityName}, summary = ${m.summary} 
+    SET entity_name = ${m.entityName}, summary = ${m.summary}
     WHERE id = $id and type = 'meditation'
     """.update
 }
