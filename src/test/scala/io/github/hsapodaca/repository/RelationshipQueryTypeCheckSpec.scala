@@ -25,7 +25,7 @@ class RelationshipQueryTypeCheckSpec
     } yield EntityRelationship(id, primaryEntityId, targetEntityId)
   }
 
-  test("Type check relationship queries") {
+  test("Check relationship queries") {
     relationship.arbitrary.sample.map { s =>
       check(select(s.id.getOrElse(1L)))
       check(select(0, 0))

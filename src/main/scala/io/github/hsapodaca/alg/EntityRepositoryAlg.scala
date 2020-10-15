@@ -6,7 +6,7 @@ trait EntityRepositoryAlg[F[_]] {
 
   def get(name: String): F[Option[Entity]]
 
-  def list(limit: Int, offset: Int): F[List[Entity]]
+  def list(entityType: EntityType, limit: Int, offset: Int): F[List[Entity]]
 
   def create(t: Entity): F[Entity]
 

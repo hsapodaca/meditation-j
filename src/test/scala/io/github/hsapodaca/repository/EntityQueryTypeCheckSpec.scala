@@ -27,12 +27,14 @@ class EntityQueryTypeCheckSpec
     } yield Entity(id, entityName, summary, scriptId, entityType )
   }
 
-  test("Typecheck entity queries") {
+  test("Check entity queries") {
     entity.arbitrary.sample.map { e =>
       check(select(e.id.getOrElse(1L)))
       check(select(e.entityName))
-      check(select(0, 0))
-      check(select(10, 100))
+      List(EntityType.Therapist, EntityType.Meditation).foreach { t =>
+        check(select(t, 0, 0))
+        check(select(t, 10, 100))
+      }
       e.id.foreach(id => check(EntitySQL.updateValues(id, e)))
       check(insertValues(e))
     }

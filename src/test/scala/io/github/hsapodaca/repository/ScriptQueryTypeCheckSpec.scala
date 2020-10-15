@@ -25,7 +25,7 @@ class ScriptQueryTypeCheckSpec
     } yield Script(id, script)
   }
 
-  test("Type check script queries") {
+  test("Check script queries") {
     script.arbitrary.sample.map { s =>
       check(select(s.id.getOrElse(1L)))
       check(select(0, 0))

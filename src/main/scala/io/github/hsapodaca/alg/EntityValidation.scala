@@ -8,20 +8,20 @@ class EntityValidation[F[_]: Applicative](
     repository: EntityRepositoryAlg[F]
 ) extends EntityValidationAlg[F] {
   override def doesNotExist(
-      meditation: Entity
+      entity: Entity
   ): EitherT[F, EntityAlreadyExistsError, Unit] =
     EitherT {
-      repository.get(meditation.entityName) map {
+      repository.get(entity.entityName) map {
         case Some(_) => Right(())
-        case _       => Left(EntityAlreadyExistsError(meditation))
+        case _       => Left(EntityAlreadyExistsError(entity))
       }
     }
 
   override def exists(
-      meditationId: Option[Long]
+      entityId: Option[Long]
   ): EitherT[F, EntityNotFoundError.type, Unit] =
     EitherT {
-      meditationId match {
+      entityId match {
         case Some(id) =>
           repository.get(id) map {
             case Some(_) => Right(())

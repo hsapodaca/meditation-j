@@ -1,20 +1,12 @@
 package io.github.hsapodaca.endpoint
 
-import cats.effect.{
-  Blocker,
-  ConcurrentEffect,
-  ContextShift,
-  IO,
-  Resource,
-  Timer,
-  _
-}
+import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
 import cats.implicits._
 import doobie.util.ExecutionContexts
-import io.github.hsapodaca.alg.EntityValidation
+import io.github.hsapodaca.alg.{EntityValidation, ScriptValidation}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
-import io.github.hsapodaca.repository.EntityRepository
+import io.github.hsapodaca.repository.{EntityRepository, ScriptRepository}
 import io.github.hsapodaca.service.{EntityService, ReadinessCheckService}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.blaze.BlazeServerBuilder
@@ -33,13 +25,16 @@ object EntityServer extends IOApp {
         connEc,
         Blocker.liftExecutionContext(txnEc)
       )
-      meditationRepo = EntityRepository[F](xa)
-      meditationValidation = EntityValidation[F](meditationRepo)
+      entityRepo = EntityRepository[F](xa)
+      entityValidation = EntityValidation[F](entityRepo)
+      entityAlg = EntityService[F](entityRepo, entityValidation)
+      scriptRepo = ScriptRepository[F](xa)
+      scriptValidation = ScriptValidation[F](scriptRepo)
+      scriptAlg = EntityService[F](entityRepo, entityValidation)
       readinessCheckAlg = ReadinessCheckService[F]()
-      meditationsAlg = EntityService[F](meditationRepo, meditationValidation)
       httpApp = (
           ReadinessCheckEndpoints.endpoints[F](readinessCheckAlg) <+>
-            EntityEndpoints.endpoints[F](meditationsAlg)
+            EntityEndpoints.endpoints[F](entityAlg)
       ).orNotFound
       _ <- Resource.liftF(DatabaseConfig.init(config.databaseConnection))
       server <- BlazeServerBuilder[F](serverEc)

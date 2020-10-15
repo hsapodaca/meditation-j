@@ -22,10 +22,8 @@ package object config {
     ConfigSource.default.at("therapist.default").loadOrThrow[Entity]
   lazy val defaultMeditation =
     ConfigSource.default.at("meditation.default").loadOrThrow[Entity]
-  lazy val meditationSearchLimitDefault =
-    ConfigSource.default.at("meditation.search.limit.default").loadOrThrow[Int]
-  lazy val therapistSearchLimitDefault =
-    ConfigSource.default.at("therapist.search.limit.default").loadOrThrow[Int]
+  lazy val entitySearchLimitDefault =
+    ConfigSource.default.at("entity.search.limit.default").loadOrThrow[Int]
   lazy val databaseConnection =
     ConfigSource.default.at("database").loadOrThrow[DatabaseConnection]
 

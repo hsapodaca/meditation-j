@@ -54,4 +54,3 @@ sealed trait ValidationError extends Product with Serializable
 case object EntityNotFoundError extends ValidationError
 case object ScriptNotFoundError extends ValidationError
 case class EntityAlreadyExistsError(m: Entity) extends ValidationError
-case class ScriptAlreadyExistsError(s: Script) extends ValidationError

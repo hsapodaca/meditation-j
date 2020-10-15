@@ -6,7 +6,7 @@ import cats.syntax.all._
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
-import io.github.hsapodaca.alg.{Entity, EntityRepositoryAlg}
+import io.github.hsapodaca.alg.{Entity, EntityRepositoryAlg, EntityType}
 
 private object EntitySQL {
 
@@ -24,10 +24,11 @@ private object EntitySQL {
     WHERE entity_name = $name
     """.query[Entity]
 
-  def select(limit: Int, offset: Int): Query0[Entity] =
+  def select(entityType: EntityType, limit: Int, offset: Int): Query0[Entity] =
     sql"""
     SELECT id, entity_name, summary, script_id, type
     FROM entities
+    WHERE type = ${entityType}
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
     """.query[Entity]
 
@@ -63,8 +64,8 @@ class EntityRepository[F[_]](val xa: Transactor[F])(implicit
   override def get(name: String): F[Option[Entity]] =
     select(name).option.transact(xa)
 
-  override def list(limit: Int, offset: Int): F[List[Entity]] = {
-    select(limit, offset)
+  override def list(entityType: EntityType, limit: Int, offset: Int): F[List[Entity]] = {
+    select(entityType, limit, offset)
       .to[List]
       .transact(xa)
   }

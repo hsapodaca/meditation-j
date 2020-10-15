@@ -36,8 +36,12 @@ class EntityService[F[_]](
     repository.delete(id)
   }
 
-  def list(pageSize: Int, offset: Int): F[List[Entity]] = {
-    repository.list(pageSize, offset)
+  def listTherapists(pageSize: Int, offset: Int): F[List[Entity]] = {
+    repository.list(EntityType.Therapist, pageSize, offset)
+  }
+
+  def listMeditations(pageSize: Int, offset: Int): F[List[Entity]] = {
+    repository.list(EntityType.Meditation, pageSize, offset)
   }
 }
 object EntityService {

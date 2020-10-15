@@ -4,10 +4,15 @@ import cats.effect.Sync
 import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.github.hsapodaca.alg.{Entity, EntityAlreadyExistsError, EntityNotFoundError}
+import io.github.hsapodaca.alg.{
+  Entity,
+  EntityAlreadyExistsError,
+  EntityNotFoundError,
+  EntityType
+}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.endpoint.Pagination.{OffsetMatcher, PageSizeMatcher}
-import io.github.hsapodaca.service.{EntityService}
+import io.github.hsapodaca.service.EntityService
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, HttpRoutes}
@@ -16,56 +21,67 @@ class EntityEndpoints[F[_]: Sync] {
   val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
   import dsl._
 
-  implicit val meditationDecoder: EntityDecoder[F, Entity] = jsonOf[F, Entity]
+  implicit val entityDecoder: EntityDecoder[F, Entity] = jsonOf[F, Entity]
 
-  def meditationRoutes(
-      meditationService: EntityService[F]
+  def entityRoutes(
+      entityService: EntityService[F]
   ): HttpRoutes[F] = {
     HttpRoutes.of[F] {
-      case GET -> Root / "meditations" / LongVar(id) =>
-        meditationService.get(id).value.flatMap {
-          case Right(meditation) => Ok(meditation.asJson)
+      case GET -> Root / "entities" / LongVar(id) =>
+        entityService.get(id).value.flatMap {
+          case Right(entity) => Ok(entity.asJson)
           case Left(EntityNotFoundError) =>
-            NotFound("The meditation was not found.")
+            NotFound("The entity was not found.")
         }
 
-      case GET -> Root / "meditations" :? PageSizeMatcher(
+      case GET -> Root / "entities" / "therapist" :? PageSizeMatcher(
             pageSize
           ) :? OffsetMatcher(offset) =>
         for {
-          res <- meditationService.list(
-            pageSize.getOrElse(config.meditationSearchLimitDefault),
+          res <- entityService.listTherapists(
+            pageSize.getOrElse(config.entitySearchLimitDefault),
             offset.getOrElse(0)
           )
           resp <- Ok(res.asJson)
         } yield resp
 
-      case DELETE -> Root / "meditation" / LongVar(id) =>
+      case GET -> Root / "entities" / "meditation" :? PageSizeMatcher(
+            pageSize
+          ) :? OffsetMatcher(offset) =>
         for {
-          _ <- meditationService.delete(id)
+          res <- entityService.listTherapists(
+            pageSize.getOrElse(config.entitySearchLimitDefault),
+            offset.getOrElse(0)
+          )
+          resp <- Ok(res.asJson)
+        } yield resp
+
+      case DELETE -> Root / "entity" / LongVar(id) =>
+        for {
+          _ <- entityService.delete(id)
           resp <- Ok()
         } yield resp
 
-      case req @ POST -> Root / "meditation" / LongVar(_) =>
+      case req @ POST -> Root / "entity" / LongVar(_) =>
         val action = for {
-          meditation <- req.as[Entity]
-          result <- meditationService.create(meditation).value
+          entity <- req.as[Entity]
+          result <- entityService.create(entity).value
         } yield result
         action.flatMap {
-          case Right(meditation) => Ok(meditation.asJson)
+          case Right(entity) => Ok(entity.asJson)
           case Left(EntityAlreadyExistsError(m)) =>
-            NotFound(s"The meditation ${m.entityName} already exists.")
+            NotFound(s"The entity ${m.entityName} already exists.")
         }
 
-      case req @ PUT -> Root / "meditation" / LongVar(_) =>
+      case req @ PUT -> Root / "entity" / LongVar(_) =>
         val action = for {
-          meditation <- req.as[Entity]
-          result <- meditationService.update(meditation).value
+          entity <- req.as[Entity]
+          result <- entityService.update(entity).value
         } yield result
         action.flatMap {
-          case Right(meditation) => Ok(meditation.asJson)
+          case Right(entity) => Ok(entity.asJson)
           case Left(EntityNotFoundError) =>
-            NotFound("The meditation was not found.")
+            NotFound("The entity was not found.")
         }
     }
   }
@@ -73,7 +89,7 @@ class EntityEndpoints[F[_]: Sync] {
 
 object EntityEndpoints {
   def endpoints[F[_]: Sync](
-      meditationService: EntityService[F]
+      entityService: EntityService[F]
   ): HttpRoutes[F] =
-    new EntityEndpoints[F].meditationRoutes(meditationService)
+    new EntityEndpoints[F].entityRoutes(entityService)
 }
