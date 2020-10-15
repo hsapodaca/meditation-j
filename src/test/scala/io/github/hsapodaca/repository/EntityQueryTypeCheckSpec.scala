@@ -4,7 +4,7 @@ import cats.effect.IO
 import doobie.scalatest.IOChecker
 import doobie.util.transactor.Transactor
 import io.github.hsapodaca.alg.{Entity, EntityType}
-import io.github.hsapodaca.doobie.testTransactor
+import io.github.hsapodaca.repository.db.testTransactor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.funsuite.AnyFunSuite
@@ -24,7 +24,7 @@ class EntityQueryTypeCheckSpec
       id <- Gen.option(Gen.posNum[Long])
       script <- arbitrary[String]
       entityType <- Gen.oneOf(EntityType.Therapist, EntityType.Meditation)
-    } yield Entity(id, entityName, summary, script, entityType )
+    } yield Entity(id, entityName, summary, script, entityType)
   }
 
   test("Check entity queries") {

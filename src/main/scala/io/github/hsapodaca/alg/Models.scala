@@ -26,9 +26,11 @@ case object EntityType
     extends Enum[EntityType]
     with CirceEnum[EntityType]
     with DoobieEnum[EntityType] {
-  case object Therapist extends EntityType
-  case object Meditation extends EntityType
   val values = findValues
+
+  case object Therapist extends EntityType
+
+  case object Meditation extends EntityType
 }
 
 sealed trait EntityRelationshipType extends EnumEntry
@@ -36,14 +38,24 @@ case object EntityRelationshipType
     extends Enum[EntityRelationshipType]
     with CirceEnum[EntityRelationshipType]
     with DoobieEnum[EntityRelationshipType] {
-  case object TherapistHasMeditation extends EntityRelationshipType
   val values = findValues
+
+  case object TherapistHasMeditation extends EntityRelationshipType
+}
+
+sealed trait SystemStatus extends EnumEntry
+case object SystemStatus
+    extends Enum[SystemStatus]
+    with CirceEnum[SystemStatus] {
+  val values = findValues
+
+  case object Up extends SystemStatus
 }
 
 case class StatusInfo(
-    status: String = "UP",
-    defaultMeditation: String = config.defaultMeditation.name,
-    defaultTherapist: String = config.defaultTherapist.name
+    status: SystemStatus = SystemStatus.Up,
+    defaultMeditation: String,
+    defaultTherapist: String
 )
 
 case class MeditationReader(therapist: Entity, meditation: Entity)

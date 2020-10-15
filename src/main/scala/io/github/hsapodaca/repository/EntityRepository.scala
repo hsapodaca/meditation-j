@@ -64,7 +64,11 @@ class EntityRepository[F[_]](val xa: Transactor[F])(implicit
   override def get(name: String): F[Option[Entity]] =
     select(name).option.transact(xa)
 
-  override def list(entityType: EntityType, limit: Int, offset: Int): F[List[Entity]] = {
+  override def list(
+      entityType: EntityType,
+      limit: Int,
+      offset: Int
+  ): F[List[Entity]] = {
     select(entityType, limit, offset)
       .to[List]
       .transact(xa)

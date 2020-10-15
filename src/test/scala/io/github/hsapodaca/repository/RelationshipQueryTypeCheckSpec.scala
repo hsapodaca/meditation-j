@@ -4,7 +4,7 @@ import cats.effect.IO
 import doobie.scalatest.IOChecker
 import doobie.util.transactor.Transactor
 import io.github.hsapodaca.alg.EntityRelationship
-import io.github.hsapodaca.doobie.testTransactor
+import io.github.hsapodaca.repository.db.testTransactor
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers

@@ -1,19 +1,26 @@
-package io.github.hsapodaca
+package io.github.hsapodaca.repository
 
 import cats.syntax.all._
-import cats.effect.{Async, Blocker, ContextShift, Effect, IO, Resource}
-import config._
-import _root_.doobie.Transactor
+import cats.effect.{Async, ContextShift, Effect, IO}
+import doobie.Transactor
+import io.github.hsapodaca.config
+import io.github.hsapodaca.config.{DatabaseConfig, DatabaseConnection}
 
 import scala.concurrent.ExecutionContext
 
-package object doobie {
+package object db {
 
   lazy val testEc = ExecutionContext.Implicits.global
 
   implicit lazy val testCs = IO.contextShift(testEc)
 
   lazy val testTransactor = initializedTransactor[IO].unsafeRunSync()
+
+  def initializedTransactor[F[_]: Effect: Async: ContextShift]
+      : F[Transactor[F]] =
+    for {
+      _ <- DatabaseConfig.init(config.databaseConnection)
+    } yield getTransactor(config.databaseConnection)
 
   def getTransactor[F[_]: Async: ContextShift](
       cfg: DatabaseConnection
@@ -24,10 +31,4 @@ package object doobie {
       cfg.user,
       cfg.password
     )
-
-  def initializedTransactor[F[_]: Effect: Async: ContextShift]
-      : F[Transactor[F]] =
-    for {
-      _ <- DatabaseConfig.init(config.databaseConnection)
-    } yield getTransactor(config.databaseConnection)
 }

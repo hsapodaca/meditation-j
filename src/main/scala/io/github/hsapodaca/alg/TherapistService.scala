@@ -2,35 +2,12 @@ package io.github.hsapodaca.alg
 
 import cats._
 import cats.data.EitherT
-import io.github.hsapodaca.config._
 
 class TherapistService[F[_]](
     entities: EntityService[F],
     relationships: RelationshipService[F]
 ) {
-
-  def init()(implicit
-      M: Monad[F]
-  ): EitherT[F, EntityAlreadyExistsError, MeditationReader] = {
-    val t = Entity(
-      None,
-      defaultTherapist.name,
-      defaultTherapist.summary,
-      defaultTherapist.script,
-      EntityType.Therapist
-    )
-    val m = Entity(
-      None,
-      defaultMeditation.name,
-      defaultMeditation.summary,
-      defaultMeditation.script,
-      EntityType.Meditation
-    )
-    val mr = MeditationReader(t, m)
-    createMeditationReader(mr)
-  }
-
-  def createMeditationReader(mr: MeditationReader)(implicit
+  def create(mr: MeditationReader)(implicit
       M: Monad[F]
   ): EitherT[F, EntityAlreadyExistsError, MeditationReader] =
     for {
