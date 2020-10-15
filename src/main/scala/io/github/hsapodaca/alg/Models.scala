@@ -1,5 +1,7 @@
 package io.github.hsapodaca.alg
 
+import io.github.hsapodaca.config
+
 case class Meditation(
     id: Option[Long],
     entityName: String,
@@ -12,6 +14,12 @@ case class Script(
     id: Option[Long],
     entityId: Long,
     script: String
+)
+
+case class StatusInfo(
+    status: String = "UP",
+    defaultMeditation: String = config.defaultMeditation.name,
+    defaultTherapist: String = config.defaultTherapist.name
 )
 
 // Validation Errors

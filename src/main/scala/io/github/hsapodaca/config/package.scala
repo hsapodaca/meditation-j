@@ -18,16 +18,16 @@ package object config {
 
   case class Server(host: String, port: Int)
 
-  val defaultTherapist =
+  lazy val defaultTherapist =
     ConfigSource.default.at("therapist.default").loadOrThrow[Entity]
-  val defaultMeditation =
+  lazy val defaultMeditation =
     ConfigSource.default.at("meditation.default").loadOrThrow[Entity]
-  val meditationSearchLimitDefault =
+  lazy val meditationSearchLimitDefault =
     ConfigSource.default.at("meditation.search.limit.default").loadOrThrow[Int]
-  val therapistSearchLimitDefault =
+  lazy val therapistSearchLimitDefault =
     ConfigSource.default.at("therapist.search.limit.default").loadOrThrow[Int]
-  val databaseConnection =
+  lazy val databaseConnection =
     ConfigSource.default.at("database").loadOrThrow[DatabaseConnection]
 
-  val server = ConfigSource.default.at("server").loadOrThrow[Server]
+  lazy val server = ConfigSource.default.at("server").loadOrThrow[Server]
 }

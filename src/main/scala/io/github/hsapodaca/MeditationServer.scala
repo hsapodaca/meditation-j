@@ -27,7 +27,7 @@ object MeditationServer extends IOApp {
       )
       meditationRepo = MeditationRepository[F](xa)
       meditationValidation = MeditationValidation[F](meditationRepo)
-      readinessCheckAlg = ReadinessCheckService.impl[F]
+      readinessCheckAlg = ReadinessCheckService[F]()
       meditationsAlg = MeditationService[F](meditationRepo, meditationValidation)
       httpApp = (
         ReadinessCheckEndpoints.endpoints[F](readinessCheckAlg) <+>

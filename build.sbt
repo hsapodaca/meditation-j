@@ -8,7 +8,6 @@ lazy val DoobieVersion = "0.9.2"
 lazy val FlywayVersion = "7.0.2"
 lazy val PureConfigVersion = "0.14.0"
 lazy val CatsVersion = "2.2.0"
-lazy val EnumeratumCirceVersion = "1.6.1"
 
 lazy val root = (project in file("."))
   .settings(
@@ -34,10 +33,10 @@ lazy val root = (project in file("."))
       "org.tpolecat" %% "doobie-core" % DoobieVersion,
       "org.tpolecat" %% "doobie-postgres" % DoobieVersion,
       "org.tpolecat" %% "doobie-hikari" % DoobieVersion,
+      "org.tpolecat" %% "doobie-scalatest" % DoobieVersion % Test,
       "com.github.pureconfig" %% "pureconfig" % PureConfigVersion,
       "com.github.pureconfig" %% "pureconfig-cats-effect" % PureConfigVersion,
-      "org.flywaydb" % "flyway-core" % FlywayVersion,
-      "com.beachape" %% "enumeratum-circe" % EnumeratumCirceVersion
+      "org.flywaydb" % "flyway-core" % FlywayVersion
     )
   )
 
