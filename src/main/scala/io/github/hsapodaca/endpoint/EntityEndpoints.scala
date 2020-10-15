@@ -4,15 +4,9 @@ import cats.effect.Sync
 import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.github.hsapodaca.alg.{
-  Entity,
-  EntityAlreadyExistsError,
-  EntityNotFoundError,
-  EntityType
-}
+import io.github.hsapodaca.alg.{Entity, EntityAlreadyExistsError, EntityNotFoundError, EntityService, EntityType}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.endpoint.Pagination.{OffsetMatcher, PageSizeMatcher}
-import io.github.hsapodaca.service.EntityService
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, HttpRoutes}

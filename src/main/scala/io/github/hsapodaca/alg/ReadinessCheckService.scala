@@ -1,7 +1,4 @@
-package io.github.hsapodaca.service
-
-import cats._
-import io.github.hsapodaca.alg.StatusInfo
+package io.github.hsapodaca.alg
 
 class ReadinessCheckService[F[_]] {
   def check(): StatusInfo = StatusInfo()

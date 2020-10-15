@@ -1,4 +1,4 @@
-package io.github.hsapodaca.service
+package io.github.hsapodaca.alg
 
 import cats.effect.IO
 import io.github.hsapodaca.endpoint.ReadinessCheckEndpoints

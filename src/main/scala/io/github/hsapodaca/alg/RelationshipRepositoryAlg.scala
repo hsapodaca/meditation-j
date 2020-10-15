@@ -2,7 +2,7 @@ package io.github.hsapodaca.alg
 
 trait RelationshipRepositoryAlg[F[_]] {
 
-  def get(id: Long): F[Option[EntityRelationship]]
+  def getByEntityId(id: Long): F[Option[EntityRelationship]]
 
   def list(limit: Int, offset: Int): F[List[EntityRelationship]]
 

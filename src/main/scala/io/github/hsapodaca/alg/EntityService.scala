@@ -1,8 +1,7 @@
-package io.github.hsapodaca.service
+package io.github.hsapodaca.alg
 
 import cats._
 import cats.data.EitherT
-import io.github.hsapodaca.alg._
 
 class EntityService[F[_]](
     repository: EntityRepositoryAlg[F],

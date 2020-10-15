@@ -12,21 +12,21 @@ private object EntitySQL {
 
   def select(id: Long): Query0[Entity] =
     sql"""
-    SELECT id, entity_name, summary, script_id, type
+    SELECT id, entity_name, summary, script, type
     FROM entities
     WHERE id = $id
     """.query[Entity]
 
   def select(name: String): Query0[Entity] =
     sql"""
-    SELECT id, entity_name, summary, script_id, type
+    SELECT id, entity_name, summary, script, type
     FROM entities
     WHERE entity_name = $name
     """.query[Entity]
 
   def select(entityType: EntityType, limit: Int, offset: Int): Query0[Entity] =
     sql"""
-    SELECT id, entity_name, summary, script_id, type
+    SELECT id, entity_name, summary, script, type
     FROM entities
     WHERE type = ${entityType}
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
@@ -34,8 +34,8 @@ private object EntitySQL {
 
   def insertValues(m: Entity): Update0 =
     sql"""
-    INSERT INTO entities (entity_name, summary, script_id, type)
-    VALUES (${m.entityName}, ${m.summary}, ${m.scriptId}, ${m.`type`})
+    INSERT INTO entities (entity_name, summary, script, type)
+    VALUES (${m.entityName}, ${m.summary}, ${m.script}, ${m.`type`})
     """.update
 
   def deleteFrom(id: Long): Update0 =

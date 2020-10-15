@@ -3,11 +3,10 @@ package io.github.hsapodaca.endpoint
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
 import cats.implicits._
 import doobie.util.ExecutionContexts
-import io.github.hsapodaca.alg.{EntityValidation, ScriptValidation}
+import io.github.hsapodaca.alg.{EntityService, EntityValidation, ReadinessCheckService, RelationshipService, TherapistService}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
-import io.github.hsapodaca.repository.{EntityRepository, ScriptRepository}
-import io.github.hsapodaca.service.{EntityService, ReadinessCheckService}
+import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.{Server => H4Server}
@@ -28,9 +27,9 @@ object EntityServer extends IOApp {
       entityRepo = EntityRepository[F](xa)
       entityValidation = EntityValidation[F](entityRepo)
       entityAlg = EntityService[F](entityRepo, entityValidation)
-      scriptRepo = ScriptRepository[F](xa)
-      scriptValidation = ScriptValidation[F](scriptRepo)
-      scriptAlg = EntityService[F](entityRepo, entityValidation)
+      relationshipRepo = RelationshipRepository[F](xa)
+      relationshipAlg = RelationshipService[F](relationshipRepo)
+      therapistAlg = TherapistService[F](entityAlg, relationshipAlg)
       readinessCheckAlg = ReadinessCheckService[F]()
       httpApp = (
           ReadinessCheckEndpoints.endpoints[F](readinessCheckAlg) <+>

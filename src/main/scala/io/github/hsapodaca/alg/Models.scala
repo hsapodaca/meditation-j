@@ -3,17 +3,13 @@ package io.github.hsapodaca.alg
 import enumeratum._
 import io.github.hsapodaca.config
 
+// Database
 case class Entity(
     id: Option[Long],
     entityName: String,
     summary: String,
-    scriptId: Long,
+    script: String,
     `type`: EntityType
-)
-
-case class Script(
-    id: Option[Long],
-    script: String
 )
 
 case class EntityRelationship(
@@ -24,6 +20,7 @@ case class EntityRelationship(
       EntityRelationshipType.TherapistHasMeditation
 )
 
+// Database and JSON
 sealed trait EntityType extends EnumEntry
 case object EntityType
     extends Enum[EntityType]
@@ -49,8 +46,9 @@ case class StatusInfo(
     defaultTherapist: String = config.defaultTherapist.name
 )
 
+case class MeditationReader(therapist: Entity, meditation: Entity)
+
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable
 case object EntityNotFoundError extends ValidationError
-case object ScriptNotFoundError extends ValidationError
 case class EntityAlreadyExistsError(m: Entity) extends ValidationError

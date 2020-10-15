@@ -22,9 +22,9 @@ class EntityQueryTypeCheckSpec
       entityName <- Gen.nonEmptyListOf(Gen.asciiPrintableChar).map(_.mkString)
       summary <- arbitrary[String]
       id <- Gen.option(Gen.posNum[Long])
-      scriptId <- Gen.posNum[Long]
+      script <- arbitrary[String]
       entityType <- Gen.oneOf(EntityType.Therapist, EntityType.Meditation)
-    } yield Entity(id, entityName, summary, scriptId, entityType )
+    } yield Entity(id, entityName, summary, script, entityType )
   }
 
   test("Check entity queries") {

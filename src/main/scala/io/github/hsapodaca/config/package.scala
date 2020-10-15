@@ -5,7 +5,7 @@ import pureconfig.generic.auto._
 
 package object config {
 
-  case class Entity(name: String, summary: String, script: String)
+  case class ConfiguredEntity(name: String, summary: String, script: String)
 
 
   case class DatabaseConnection(
@@ -19,9 +19,9 @@ package object config {
   case class Server(host: String, port: Int)
 
   lazy val defaultTherapist =
-    ConfigSource.default.at("therapist.default").loadOrThrow[Entity]
+    ConfigSource.default.at("therapist.default").loadOrThrow[ConfiguredEntity]
   lazy val defaultMeditation =
-    ConfigSource.default.at("meditation.default").loadOrThrow[Entity]
+    ConfigSource.default.at("meditation.default").loadOrThrow[ConfiguredEntity]
   lazy val entitySearchLimitDefault =
     ConfigSource.default.at("entity.search.limit.default").loadOrThrow[Int]
   lazy val databaseConnection =
