@@ -3,9 +3,9 @@ package io.github.hsapodaca.repository
 import cats.data.OptionT
 import cats.effect.Bracket
 import cats.syntax.all._
-import doobie.util.transactor.Transactor
 import doobie._
 import doobie.implicits._
+import doobie.util.transactor.Transactor
 import io.github.hsapodaca.alg.{Script, ScriptRepositoryAlg}
 
 private object ScriptSQL {

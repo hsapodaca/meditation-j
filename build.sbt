@@ -8,6 +8,8 @@ lazy val DoobieVersion = "0.9.2"
 lazy val FlywayVersion = "7.0.2"
 lazy val PureConfigVersion = "0.14.0"
 lazy val CatsVersion = "2.2.0"
+lazy val EnumeratumCirceVersion = "1.6.1"
+lazy val EnumeratumDoobieVersion = "1.6.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -25,6 +27,8 @@ lazy val root = (project in file("."))
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "org.http4s" %% "http4s-dsl" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
+      "com.beachape" %% "enumeratum-circe" % EnumeratumCirceVersion,
+      "com.beachape" %% "enumeratum-doobie" % EnumeratumDoobieVersion,
       "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
       "org.scalacheck" %% "scalacheck" % ScalaCheckVersion % Test,
       "org.scalatestplus" %% "scalacheck-1-14" % ScalaTestPlusVersion % Test,

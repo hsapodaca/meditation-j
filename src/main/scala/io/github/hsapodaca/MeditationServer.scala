@@ -1,17 +1,25 @@
 package io.github.hsapodaca.endpoint
 
-import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
+import cats.effect.{
+  Blocker,
+  ConcurrentEffect,
+  ContextShift,
+  IO,
+  Resource,
+  Timer,
+  _
+}
 import cats.implicits._
 import doobie.util.ExecutionContexts
-import io.github.hsapodaca.alg.MeditationValidation
+import io.github.hsapodaca.alg.EntityValidation
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
-import io.github.hsapodaca.repository.MeditationRepository
-import io.github.hsapodaca.service.{MeditationService, ReadinessCheckService}
+import io.github.hsapodaca.repository.EntityRepository
+import io.github.hsapodaca.service.{EntityService, ReadinessCheckService}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.{Server => H4Server}
-object MeditationServer extends IOApp {
+object EntityServer extends IOApp {
 
   def createServer[F[_]: ContextShift: ConcurrentEffect: Timer]
       : Resource[F, H4Server[F]] = {
@@ -25,13 +33,13 @@ object MeditationServer extends IOApp {
         connEc,
         Blocker.liftExecutionContext(txnEc)
       )
-      meditationRepo = MeditationRepository[F](xa)
-      meditationValidation = MeditationValidation[F](meditationRepo)
+      meditationRepo = EntityRepository[F](xa)
+      meditationValidation = EntityValidation[F](meditationRepo)
       readinessCheckAlg = ReadinessCheckService[F]()
-      meditationsAlg = MeditationService[F](meditationRepo, meditationValidation)
+      meditationsAlg = EntityService[F](meditationRepo, meditationValidation)
       httpApp = (
-        ReadinessCheckEndpoints.endpoints[F](readinessCheckAlg) <+>
-        MeditationEndpoints.endpoints[F](meditationsAlg)
+          ReadinessCheckEndpoints.endpoints[F](readinessCheckAlg) <+>
+            EntityEndpoints.endpoints[F](meditationsAlg)
       ).orNotFound
       _ <- Resource.liftF(DatabaseConfig.init(config.databaseConnection))
       server <- BlazeServerBuilder[F](serverEc)
