@@ -28,6 +28,7 @@ class RelationshipQueryTypeCheckSpec
   test("Check relationship queries") {
     relationship.arbitrary.sample.map { s =>
       check(select(s.id.getOrElse(1L)))
+      check(selectByEntityId(s.id.getOrElse(1L)))
       check(select(0, 0))
       check(select(10, 100))
       check(insertValues(s))

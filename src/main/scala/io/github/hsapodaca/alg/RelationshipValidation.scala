@@ -9,10 +9,10 @@ class RelationshipValidation[F[_]: Applicative](
 ) extends RelationshipValidationAlg[F] {
   override def doesNotExist(
       r: EntityRelationship
-  ): EitherT[F, RelationshipAlreadyExistsError.type, Unit] =
+  ): EitherT[F, ItemAlreadyExistsError.type, Unit] =
     EitherT {
       repository.getByEntityId(r.primaryEntityId) map {
-        case Some(_) => Left(RelationshipAlreadyExistsError)
+        case Some(_) => Left(ItemAlreadyExistsError)
         case _       => Right(())
       }
     }

@@ -30,11 +30,15 @@ class EntityEndpointsSpec
     clearData
   }
 
-  List("therapists", "meditations") foreach { item =>
+  for {
+    (item, itemType) <-
+      Map("therapists" -> "Therapist", "meditations" -> "Meditation")
+  } {
     s"GET /entities/$item" should "respond with 200 and a list of entities" in {
       val resp = get(s"/v1/entities/$item")
       assert(resp.status === Status.Ok)
       assert(!resp.as[List[Entity]].unsafeRunSync().head.entityName.isBlank)
+      assert(resp.as[List[Entity]].unsafeRunSync().head.`type`.toString === itemType)
     }
 
     s"GET /entities/$item" should "paginate until the end of content" in {

@@ -6,10 +6,10 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.config
 import Pagination.{OffsetMatcher, PageSizeMatcher}
-import io.github.hsapodaca.alg.{Entity, EntityAlreadyExistsError, EntityIsInvalidForUpdateError, EntityNotFoundError, EntityService}
+import io.github.hsapodaca.alg.{Entity, EntityAlreadyExistsError, EntityIsInvalidForUpdateError, EntityNotFoundError, EntityService, ItemAlreadyExistsError}
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{EntityDecoder, HttpRoutes}
+import org.http4s.{EntityDecoder, EntityEncoder, HttpRoutes}
 
 class EntityEndpoints[F[_]: Sync] {
   val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
@@ -43,7 +43,7 @@ class EntityEndpoints[F[_]: Sync] {
             pageSize
           ) :? OffsetMatcher(offset) =>
         for {
-          res <- entityService.listTherapists(
+          res <- entityService.listMeditations(
             pageSize.getOrElse(config.entitySearchLimitDefault),
             offset.getOrElse(0)
           )
@@ -63,8 +63,8 @@ class EntityEndpoints[F[_]: Sync] {
         } yield result
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(EntityAlreadyExistsError(m)) =>
-            Conflict(s"The entity ${m.entityName} already exists.")
+          case Left(ItemAlreadyExistsError) =>
+            Conflict(s"This entity already exists.")
         }
 
       case req @ PUT -> Root / "v1" / "entities" / LongVar(id) =>

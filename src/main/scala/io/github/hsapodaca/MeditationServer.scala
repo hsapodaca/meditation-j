@@ -1,26 +1,13 @@
 package io.github.hsapodaca.endpoint
 
-import cats.effect.{
-  Blocker,
-  ConcurrentEffect,
-  ContextShift,
-  IO,
-  Resource,
-  Timer,
-  _
-}
+import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
 import cats.implicits._
 import doobie.util.ExecutionContexts
-import io.github.hsapodaca.alg.{
-  EntityService,
-  EntityValidation,
-  RelationshipService,
-  TherapistService
-}
+import io.github.hsapodaca.alg.{EntityService, EntityValidation, RelationshipService, RelationshipValidation, TherapistService}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
-import io.github.hsapodaca.web.{EntityEndpoints, ReadinessCheckEndpoints}
+import io.github.hsapodaca.web.{EntityEndpoints, ReadinessCheckEndpoints, RelationshipEndpoints}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.{Server => H4Server}
@@ -45,11 +32,13 @@ object EntityServer extends IOApp {
       entityValidation = EntityValidation[F](entityRepo)
       entityAlg = EntityService[F](entityRepo, entityValidation)
       relationshipRepo = RelationshipRepository[F](xa)
-      relationshipAlg = RelationshipService[F](relationshipRepo)
+      relationshipValidation = RelationshipValidation[F](relationshipRepo)
+      relationshipAlg = RelationshipService[F](relationshipRepo, relationshipValidation)
       therapistAlg = TherapistService[F](entityAlg, relationshipAlg)
       httpApp = (
           ReadinessCheckEndpoints.endpoints[F](therapistAlg) <+>
-            EntityEndpoints.endpoints[F](entityAlg)
+            EntityEndpoints.endpoints[F](entityAlg) <+>
+            RelationshipEndpoints.endpoints[F](relationshipAlg)
       ).orNotFound
       _ <- Resource.liftF(DatabaseConfig.init(config.databaseConnection))
       server <- BlazeServerBuilder[F](serverEc)

@@ -22,9 +22,15 @@ class RelationshipEndpoints[F[_]: Sync] {
   ): HttpRoutes[F] = {
     HttpRoutes.of[F] {
 
-      case GET -> Root / "v1" / "entities" / LongVar(id) / "relationships" =>
+      case GET -> Root / "v1" / "entities" / LongVar(id) / "relationship" =>
         for {
           res <- relationshipService.getByEntityId(id).value
+          resp <- Ok(res.asJson)
+        } yield resp
+
+      case GET -> Root / "v1" / "relationships" / LongVar(id) =>
+        for {
+          res <- relationshipService.get(id).value
           resp <- Ok(res.asJson)
         } yield resp
 
@@ -41,8 +47,8 @@ class RelationshipEndpoints[F[_]: Sync] {
         } yield result
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(RelationshipAlreadyExistsError(m)) =>
-            Conflict(s"The relationship ${m.entityName} already exists.")
+          case Left(ItemAlreadyExistsError) =>
+            Conflict(s"This relationship already exists.")
         }
     }
   }

@@ -9,10 +9,10 @@ class RelationshipService[F[_]](
 ) {
   def create(relationship: EntityRelationship)(implicit
       M: Monad[F]
-  ): EitherT[F, RelationshipAlreadyExistsError, Entity] =
+  ): EitherT[F, ItemAlreadyExistsError.type, EntityRelationship] =
     for {
-      _ <- validation.doesNotExist(entity)
-      saved <- EitherT.liftF(repository.create(entity))
+      _ <- validation.doesNotExist(relationship)
+      saved <- EitherT.liftF(repository.create(relationship))
     } yield saved
 
   def list(pageSize: Int, offset: Int)(implicit
@@ -23,6 +23,11 @@ class RelationshipService[F[_]](
       F: Functor[F]
   ): EitherT[F, EntityNotFoundError.type, EntityRelationship] =
     EitherT.fromOptionF(repository.getByEntityId(id), EntityNotFoundError)
+
+  def get(id: Long)(implicit
+                              F: Functor[F]
+  ): EitherT[F, EntityNotFoundError.type, EntityRelationship] =
+    EitherT.fromOptionF(repository.get(id), EntityNotFoundError)
 
   def delete(id: Long): F[Int] = {
     repository.delete(id)

@@ -14,9 +14,9 @@ import org.http4s.implicits.{
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class ReadinessCheckSpec extends AnyFlatSpec with Matchers {
+class ReadinessCheckEndpointsSpec extends AnyFlatSpec with Matchers {
 
-  "GET /v1/entities" should "respond with 200" in {
+  "GET /status" should "respond with 200" in {
     assert(resp.status === Status.Ok)
   }
 

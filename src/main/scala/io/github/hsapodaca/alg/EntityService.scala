@@ -9,7 +9,7 @@ class EntityService[F[_]](
 ) {
   def create(entity: Entity)(implicit
       M: Monad[F]
-  ): EitherT[F, EntityAlreadyExistsError, Entity] =
+  ): EitherT[F, ItemAlreadyExistsError.type, Entity] =
     for {
       _ <- validation.doesNotExist(entity)
       saved <- EitherT.liftF(repository.create(entity))

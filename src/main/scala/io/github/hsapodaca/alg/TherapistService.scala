@@ -9,14 +9,13 @@ class TherapistService[F[_]](
 ) {
   def create(mr: MeditationReader)(implicit
       M: Monad[F]
-  ): EitherT[F, EntityAlreadyExistsError, MeditationReader] =
+  ): EitherT[F, ItemAlreadyExistsError.type, MeditationReader] =
     for {
       m <- entities.create(mr.meditation)
       meditationId = m.id.getOrElse(1L)
       t <- entities.create(mr.therapist)
       therapistId = t.id.getOrElse(1L)
-      _ <- EitherT.liftF(
-        relationships.create(
+      _ <- relationships.create(
           EntityRelationship(
             None,
             therapistId,
@@ -24,7 +23,6 @@ class TherapistService[F[_]](
             EntityRelationshipType.TherapistHasMeditation
           )
         )
-      )
       saved = MeditationReader(m, t)
     } yield saved
 

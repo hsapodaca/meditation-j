@@ -4,7 +4,7 @@ import cats.data.EitherT
 trait EntityValidationAlg[F[_]] {
   def doesNotExist(
       entity: Entity
-  ): EitherT[F, EntityAlreadyExistsError, Unit]
+  ): EitherT[F, ItemAlreadyExistsError.type, Unit]
 
   def entityNameDoesNotExist(
       entity: Entity

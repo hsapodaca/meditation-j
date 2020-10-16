@@ -8,11 +8,18 @@ import io.github.hsapodaca.alg.{EntityRelationship, RelationshipRepositoryAlg}
 
 private object RelationshipSQL {
 
-  def select(id: Long): Query0[EntityRelationship] =
+  def selectByEntityId(id: Long): Query0[EntityRelationship] =
     sql"""
     SELECT id, primary_entity_id, target_entity_id, type
     FROM entity_relationships
     WHERE primary_entity_id = $id
+    """.query[EntityRelationship]
+
+  def select(id: Long): Query0[EntityRelationship] =
+    sql"""
+    SELECT id, primary_entity_id, target_entity_id, type
+    FROM entity_relationships
+    WHERE id = $id
     """.query[EntityRelationship]
 
   def select(limit: Int, offset: Int): Query0[EntityRelationship] =
@@ -41,8 +48,11 @@ class RelationshipRepository[F[_]](val xa: Transactor[F])(implicit
 
   import RelationshipSQL._
 
-  override def getByEntityId(id: Long): F[Option[EntityRelationship]] =
+  override def get(id: Long): F[Option[EntityRelationship]] =
     select(id).option.transact(xa)
+
+  override def getByEntityId(id: Long): F[Option[EntityRelationship]] =
+    selectByEntityId(id).option.transact(xa)
 
   override def list(limit: Int, offset: Int): F[List[EntityRelationship]] =
     select(limit, offset).to[List].transact(xa)

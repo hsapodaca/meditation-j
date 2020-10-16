@@ -9,10 +9,10 @@ class EntityValidation[F[_]: Applicative](
 ) extends EntityValidationAlg[F] {
   override def doesNotExist(
       entity: Entity
-  ): EitherT[F, EntityAlreadyExistsError, Unit] =
+  ): EitherT[F, ItemAlreadyExistsError.type, Unit] =
     EitherT {
       repository.get(entity.entityName) map {
-        case Some(_) => Left(EntityAlreadyExistsError(entity))
+        case Some(_) => Left(ItemAlreadyExistsError)
         case _       => Right(())
       }
     }

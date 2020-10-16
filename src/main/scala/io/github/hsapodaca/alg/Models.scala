@@ -59,9 +59,10 @@ case class StatusInfo(
 
 case class MeditationReader(therapist: Entity, meditation: Entity)
 
+
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable
 case object EntityNotFoundError extends ValidationError
+case object ItemAlreadyExistsError extends ValidationError
 case class EntityAlreadyExistsError(m: Entity) extends ValidationError
 case class EntityIsInvalidForUpdateError(m: Entity) extends ValidationError
-case class RelationshipAlreadyExistsError(m: Entity) extends ValidationError
