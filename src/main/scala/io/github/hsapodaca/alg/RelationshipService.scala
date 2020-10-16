@@ -10,6 +10,10 @@ class RelationshipService[F[_]](
       M: Monad[F]
   ): F[EntityRelationship] = repository.create(relationship)
 
+  def list(pageSize: Int, offset: Int)(implicit
+      F: Functor[F]
+  ): F[List[EntityRelationship]] = repository.list(pageSize, offset)
+
   def getByEntityId(id: Long)(implicit
       F: Functor[F]
   ): EitherT[F, EntityNotFoundError.type, EntityRelationship] =

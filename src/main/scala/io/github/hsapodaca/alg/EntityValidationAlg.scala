@@ -6,7 +6,11 @@ trait EntityValidationAlg[F[_]] {
       entity: Entity
   ): EitherT[F, EntityAlreadyExistsError, Unit]
 
+  def entityNameDoesNotExist(
+      entity: Entity
+  ): EitherT[F, EntityIsInvalidForUpdateError, Unit]
+
   def exists(
-      entity: Option[Long]
+      id: Option[Long]
   ): EitherT[F, EntityNotFoundError.type, Unit]
 }

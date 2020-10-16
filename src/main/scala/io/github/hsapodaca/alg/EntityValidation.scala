@@ -16,7 +16,17 @@ class EntityValidation[F[_]: Applicative](
         case _       => Right(())
       }
     }
-
+  def entityNameDoesNotExist(
+      entity: Entity
+  ): EitherT[F, EntityIsInvalidForUpdateError, Unit] = {
+    EitherT {
+      repository.get(entity.entityName) map {
+        case Some(e) if e.id != entity.id =>
+          Left(EntityIsInvalidForUpdateError(entity))
+        case _ => Right(())
+      }
+    }
+  }
   override def exists(
       entityId: Option[Long]
   ): EitherT[F, EntityNotFoundError.type, Unit] =

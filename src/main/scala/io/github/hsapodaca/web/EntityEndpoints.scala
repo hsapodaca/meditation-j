@@ -6,12 +6,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.config
 import Pagination.{OffsetMatcher, PageSizeMatcher}
-import io.github.hsapodaca.alg.{
-  Entity,
-  EntityAlreadyExistsError,
-  EntityNotFoundError,
-  EntityService
-}
+import io.github.hsapodaca.alg.{Entity, EntityAlreadyExistsError, EntityIsInvalidForUpdateError, EntityNotFoundError, EntityService}
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, HttpRoutes}
@@ -72,15 +67,15 @@ class EntityEndpoints[F[_]: Sync] {
             Conflict(s"The entity ${m.entityName} already exists.")
         }
 
-      case req @ PUT -> Root / "v1" / "entities" / LongVar(_) =>
+      case req @ PUT -> Root / "v1" / "entities" / LongVar(id) =>
         val action = for {
           entity <- req.as[Entity]
-          result <- entityService.update(entity).value
+          result <- entityService.update(entity.copy(id = Some(id))).value
         } yield result
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(EntityNotFoundError) =>
-            NotFound("The entity was not found.")
+          case Left(EntityIsInvalidForUpdateError(m)) =>
+            BadRequest(s"The entity ${m.entityName} cannot be updated.")
         }
     }
   }

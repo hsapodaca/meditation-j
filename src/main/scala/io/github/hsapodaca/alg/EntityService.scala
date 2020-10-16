@@ -17,12 +17,12 @@ class EntityService[F[_]](
 
   def update(entity: Entity)(implicit
       M: Monad[F]
-  ): EitherT[F, EntityNotFoundError.type, Entity] =
+  ): EitherT[F, EntityIsInvalidForUpdateError, Entity] =
     for {
-      _ <- validation.exists(entity.id)
+      _ <- validation.entityNameDoesNotExist(entity)
       saved <- EitherT.fromOptionF(
         repository.update(entity),
-        EntityNotFoundError
+        EntityIsInvalidForUpdateError(entity)
       )
     } yield saved
 
