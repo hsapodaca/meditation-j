@@ -4,12 +4,9 @@ import cats.effect.IO
 import cats.implicits.toSemigroupKOps
 import io.circe.generic.auto._
 import io.github.hsapodaca.alg._
-import io.github.hsapodaca.endpoint.repos.{entities, relationships}
+import io.github.hsapodaca.endpoint.repos.{clearData, entities, relationships}
 import io.github.hsapodaca.web.{EntityEndpoints, RelationshipEndpoints}
-import org.http4s.circe.CirceEntityCodec.{
-  circeEntityDecoder,
-  circeEntityEncoder
-}
+import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
@@ -17,8 +14,6 @@ import org.http4s.{Response, Status, Uri}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-
-import scala.::
 
 class RelationshipEndpointsSpec
     extends AnyFlatSpec
@@ -65,23 +60,23 @@ class RelationshipEndpointsSpec
         None,
         1L,
         2L,
-        EntityRelationshipType.TherapistHasMeditation
+        EntityRelationshipType.FriendHasMeditation
       )
     )
     assert(resp.status === Status.Conflict)
   }
 
-  s"POST, PUT and DELETE /entities and /relationships" should "succeed" in {
+  s"POST, PUT and DELETE /entities and /relationships for meditator" should "succeed" in {
     val resp = post(
       "/v1/entities",
-      Entity(None, "A", "Test", "Test", EntityType.Therapist)
+      Entity(None, "A", "Test", "Test", EntityType.Friend)
     )
     assert(resp.status === Status.Ok)
     val id = resp.as[Entity].unsafeRunSync().id.get
 
     val resp2 = post(
       "/v1/entities",
-      Entity(None, "Test", "Test", "Test", EntityType.Meditation)
+      Entity(None, "Meditation", "", "", EntityType.Meditation)
     )
     assert(resp2.status === Status.Ok)
     val targetId = resp2.as[Entity].unsafeRunSync().id.get
@@ -92,7 +87,7 @@ class RelationshipEndpointsSpec
         None,
         id,
         targetId,
-        EntityRelationshipType.TherapistHasMeditation
+        EntityRelationshipType.FriendHasMeditation
       )
     )
     assert(resp3.status === Status.Ok)
@@ -151,21 +146,5 @@ class RelationshipEndpointsSpec
       .endpoints(relationships)
       .orNotFound(req)
       .unsafeRunSync()
-  }
-
-  private def clearData = {
-    val allTherapists = entities.listTherapists(10000, 0).unsafeRunSync()
-    val allMeditations = entities.listMeditations(10000, 0).unsafeRunSync()
-    val seededTherapists = allTherapists.filter(_.entityName == "J")
-    val seededMeditations =
-      allMeditations.filter(_.entityName == "Leaves on a Stream Meditation")
-
-    val seededEntityIds = (seededTherapists ++ seededMeditations).map(_.id)
-
-    (allTherapists ++ allMeditations)
-      .filterNot(i => seededEntityIds.contains(i.id))
-      .foreach { entity =>
-        entities.delete(entity.id.get).unsafeRunSync()
-      }
   }
 }

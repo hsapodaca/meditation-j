@@ -7,7 +7,7 @@ import io.circe.syntax._
 import io.github.hsapodaca.alg.{
   EntityNotFoundError,
   StatusInfo,
-  TherapistService
+  MeditatorService
 }
 import org.http4s.HttpRoutes
 import org.http4s.circe._
@@ -18,7 +18,7 @@ class ReadinessCheckEndpoints[F[_]: Sync] {
   import dsl._
 
   def readinessCheckRoutes(
-      meditationReader: TherapistService[F]
+      meditationReader: MeditatorService[F]
   ): HttpRoutes[F] = {
     HttpRoutes.of[F] {
       case GET -> Root / "status" =>
@@ -26,8 +26,8 @@ class ReadinessCheckEndpoints[F[_]: Sync] {
           case Right(mr) =>
             Ok(
               StatusInfo(
-                defaultTherapist = mr.therapist.entityName,
-                defaultMeditation = mr.meditation.entityName
+                friend = mr.friend.entityName,
+                meditation = mr.meditation.entityName
               ).asJson
             )
           case Left(EntityNotFoundError) =>
@@ -39,7 +39,7 @@ class ReadinessCheckEndpoints[F[_]: Sync] {
 
 object ReadinessCheckEndpoints {
   def endpoints[F[_]: Sync](
-      meditationReader: TherapistService[F]
+      meditationReader: MeditatorService[F]
   ): HttpRoutes[F] =
     new ReadinessCheckEndpoints[F].readinessCheckRoutes(meditationReader)
 }

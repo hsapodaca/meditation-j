@@ -3,7 +3,7 @@ package io.github.hsapodaca
 import cats.effect.IO
 import io.circe.generic.auto._
 import io.github.hsapodaca.alg.StatusInfo
-import io.github.hsapodaca.endpoint.repos.therapists
+import io.github.hsapodaca.endpoint.repos.meditators
 import io.github.hsapodaca.web.ReadinessCheckEndpoints
 import org.http4s.circe.CirceEntityCodec.circeEntityDecoder
 import org.http4s.{Method, Request, Response, Status, Uri}
@@ -23,8 +23,8 @@ class ReadinessCheckEndpointsSpec extends AnyFlatSpec with Matchers {
   it should "return status details" in {
     assert(
       resp.as[StatusInfo].unsafeRunSync() === StatusInfo(
-        defaultMeditation = "Leaves on a Stream Meditation",
-        defaultTherapist = "J"
+        meditation = "Leaves on a Stream Meditation",
+        friend = "J"
       )
     )
   }
@@ -34,7 +34,7 @@ class ReadinessCheckEndpointsSpec extends AnyFlatSpec with Matchers {
   private[this] def get(uri: Uri): Response[IO] = {
     val req = Request[IO](Method.GET, uri)
     ReadinessCheckEndpoints
-      .endpoints(therapists)
+      .endpoints(meditators)
       .orNotFound(req)
       .unsafeRunSync()
   }

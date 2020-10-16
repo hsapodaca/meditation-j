@@ -36,11 +36,11 @@ class EntityEndpoints[F[_]: Sync] {
             NotFound("The entity was not found.")
         }
 
-      case GET -> Root / "v1" / "entities" / "therapists" :? PageSizeMatcher(
+      case GET -> Root / "v1" / "entities" / "friends" :? PageSizeMatcher(
             pageSize
           ) :? OffsetMatcher(offset) =>
         for {
-          res <- entityService.listTherapists(
+          res <- entityService.listFriends(
             pageSize.getOrElse(config.entitySearchLimitDefault),
             offset.getOrElse(0)
           )

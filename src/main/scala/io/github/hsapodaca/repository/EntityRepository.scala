@@ -6,7 +6,12 @@ import cats.syntax.all._
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
-import io.github.hsapodaca.alg.{Entity, EntityRepositoryAlg, EntityType}
+import io.github.hsapodaca.alg.{
+  Entity,
+  EntityRepositoryAlg,
+  EntityType,
+  Meditator
+}
 
 private object EntitySQL {
 
@@ -82,8 +87,7 @@ class EntityRepository[F[_]](val xa: Transactor[F])(implicit
   }
 
   override def getByParentId(parentId: Long): F[Option[Entity]] = {
-    selectByParentId(parentId)
-      .option
+    selectByParentId(parentId).option
       .transact(xa)
   }
 

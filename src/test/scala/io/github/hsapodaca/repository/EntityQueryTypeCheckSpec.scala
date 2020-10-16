@@ -23,7 +23,7 @@ class EntityQueryTypeCheckSpec
       summary <- arbitrary[String]
       id <- Gen.option(Gen.posNum[Long])
       script <- arbitrary[String]
-      entityType <- Gen.oneOf(EntityType.Therapist, EntityType.Meditation)
+      entityType <- Gen.oneOf(EntityType.Friend, EntityType.Meditation)
     } yield Entity(id, entityName, summary, script, entityType)
   }
 
@@ -31,7 +31,7 @@ class EntityQueryTypeCheckSpec
     entity.arbitrary.sample.map { e =>
       check(select(e.id.getOrElse(1L)))
       check(select(e.entityName))
-      List(EntityType.Therapist, EntityType.Meditation).foreach { t =>
+      List(EntityType.Friend, EntityType.Meditation).foreach { t =>
         check(select(t, 0, 0))
         check(select(t, 10, 100))
       }

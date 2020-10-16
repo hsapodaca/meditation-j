@@ -7,6 +7,7 @@ class EntityService[F[_]](
     repository: EntityRepositoryAlg[F],
     validation: EntityValidationAlg[F]
 ) {
+
   def create(entity: Entity)(implicit
       M: Monad[F]
   ): EitherT[F, ItemAlreadyExistsError.type, Entity] =
@@ -38,8 +39,8 @@ class EntityService[F[_]](
 
   def delete(id: Long): F[Int] = repository.delete(id)
 
-  def listTherapists(pageSize: Int, offset: Int): F[List[Entity]] = {
-    repository.list(EntityType.Therapist, pageSize, offset)
+  def listFriends(pageSize: Int, offset: Int): F[List[Entity]] = {
+    repository.list(EntityType.Friend, pageSize, offset)
   }
 
   def listMeditations(pageSize: Int, offset: Int): F[List[Entity]] = {

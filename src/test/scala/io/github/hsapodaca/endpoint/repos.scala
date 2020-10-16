@@ -7,7 +7,7 @@ import io.github.hsapodaca.alg.{
   EntityValidation,
   RelationshipService,
   RelationshipValidation,
-  TherapistService
+  MeditatorService
 }
 import io.github.hsapodaca.repository.db.testTransactor
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
@@ -21,5 +21,21 @@ package object repos {
     relationshipRepo,
     RelationshipValidation[IO](relationshipRepo)
   )
-  val therapists = TherapistService[IO](entities, relationships)
+  val meditators = MeditatorService[IO](entities, relationships)
+
+  def clearData = {
+    val allFriends = entities.listFriends(10000, 0).unsafeRunSync()
+    val allMeditations = entities.listMeditations(10000, 0).unsafeRunSync()
+    val seededFriends = allFriends.filter(_.entityName == "J")
+    val seededMeditations =
+      allMeditations.filter(_.entityName == "Leaves on a Stream Meditation")
+
+    val seededEntityIds = (seededFriends ++ seededMeditations).map(_.id)
+
+    (allFriends ++ allMeditations)
+      .filterNot(i => seededEntityIds.contains(i.id))
+      .foreach { entity =>
+        entities.delete(entity.id.get).unsafeRunSync()
+      }
+  }
 }

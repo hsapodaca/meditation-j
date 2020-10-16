@@ -1,4 +1,4 @@
--- Scripted entities: ie therapists or meditations
+-- Scripted entities
 create TABLE entities(
   id BIGSERIAL primary key not null,
   entity_name TEXT not null,
@@ -11,7 +11,7 @@ create INDEX entities_type_index ON entities(type);
 
 
 
--- ie: therapists can have meditations
+-- ie: friends can have meditations
 create TABLE entity_relationships(
   id BIGSERIAL primary key not null,
   primary_entity_id BIGSERIAL not null,

@@ -3,7 +3,7 @@ package io.github.hsapodaca.config
 import cats.effect.{Async, Blocker, ContextShift, IO, Resource, Sync}
 import doobie.ExecutionContexts
 import doobie.hikari.HikariTransactor
-import io.github.hsapodaca.alg.{EntityValidation, TherapistService}
+import io.github.hsapodaca.alg.{EntityValidation, MeditatorService}
 import io.github.hsapodaca.repository.EntityRepository
 import org.flywaydb.core.Flyway
 import io.github.hsapodaca.config._
@@ -32,6 +32,7 @@ object DatabaseConfig {
     S.delay {
       val flyway =
         Flyway.configure().dataSource(db.url, db.user, db.password).load()
+      flyway.clean()
       flyway.migrate()
       ()
     }

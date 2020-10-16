@@ -16,7 +16,7 @@ case class EntityRelationship(
     primaryEntityId: Long,
     targetEntityId: Long,
     `type`: EntityRelationshipType =
-      EntityRelationshipType.TherapistHasMeditation
+      EntityRelationshipType.FriendHasMeditation
 )
 
 // Database and JSON
@@ -27,8 +27,7 @@ case object EntityType
     with DoobieEnum[EntityType] {
   val values = findValues
 
-  case object Therapist extends EntityType
-
+  case object Friend extends EntityType
   case object Meditation extends EntityType
 }
 
@@ -38,8 +37,7 @@ case object EntityRelationshipType
     with CirceEnum[EntityRelationshipType]
     with DoobieEnum[EntityRelationshipType] {
   val values = findValues
-
-  case object TherapistHasMeditation extends EntityRelationshipType
+  case object FriendHasMeditation extends EntityRelationshipType
 }
 
 sealed trait SystemStatus extends EnumEntry
@@ -52,12 +50,12 @@ case object SystemStatus
 }
 
 case class StatusInfo(
-    status: SystemStatus = SystemStatus.Up,
-    defaultMeditation: String,
-    defaultTherapist: String
+                       status: SystemStatus = SystemStatus.Up,
+                       meditation: String,
+                       friend: String
 )
 
-case class MeditationReader(therapist: Entity, meditation: Entity)
+case class Meditator(friend: Entity, meditation: Entity)
 
 case class Script(currentLine: String)
 

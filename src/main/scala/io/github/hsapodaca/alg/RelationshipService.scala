@@ -7,6 +7,7 @@ class RelationshipService[F[_]](
     repository: RelationshipRepositoryAlg[F],
     validation: RelationshipValidationAlg[F]
 ) {
+
   def create(relationship: EntityRelationship)(implicit
       M: Monad[F]
   ): EitherT[F, ItemAlreadyExistsError.type, EntityRelationship] =

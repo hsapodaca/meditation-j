@@ -32,7 +32,7 @@ class EntityEndpointsSpec
 
   for {
     (item, itemType) <-
-      Map("therapists" -> "Therapist", "meditations" -> "Meditation")
+      Map("friends" -> "Friend", "meditations" -> "Meditation")
   } {
     s"GET /entities/$item" should "respond with 200 and a list of entities" in {
       val resp = get(s"/v1/entities/$item")
@@ -65,7 +65,7 @@ class EntityEndpointsSpec
   s"POST /entities" should "not create existing type and name" in {
     val resp = post(
       s"/v1/entities",
-      Entity(Some(1L), "J", "...", "...", EntityType.Therapist)
+      Entity(Some(1L), "J", "...", "...", EntityType.Friend)
     )
     assert(resp.status === Status.Conflict)
   }
@@ -79,7 +79,7 @@ class EntityEndpointsSpec
     val id = resp.as[Entity].unsafeRunSync().id.get
     val resp2 = put(
       s"/v1/entities/$id",
-      Entity(Some(id), "J", "...", "...", EntityType.Therapist)
+      Entity(Some(id), "J", "...", "...", EntityType.Friend)
     )
     assert(resp2.status === Status.BadRequest)
     val resp3 = delete(s"/v1/entities/$id")
@@ -147,15 +147,15 @@ class EntityEndpointsSpec
   }
 
   private def clearData = {
-    val allTherapists = entities.listTherapists(10000, 0).unsafeRunSync()
+    val allFriends = entities.listFriends(10000, 0).unsafeRunSync()
     val allMeditations = entities.listMeditations(10000, 0).unsafeRunSync()
-    val seededTherapists = allTherapists.filter(_.entityName == "J")
+    val seededFriends = allFriends.filter(_.entityName == "J")
     val seededMeditations =
       allMeditations.filter(_.entityName == "Leaves on a Stream Meditation")
 
-    val seededEntityIds = (seededTherapists ++ seededMeditations).map(_.id)
+    val seededEntityIds = (seededFriends ++ seededMeditations).map(_.id)
 
-    (allTherapists ++ allMeditations)
+    (allFriends ++ allMeditations)
       .filterNot(i => seededEntityIds.contains(i.id))
       .foreach { entity =>
         entities.delete(entity.id.get).unsafeRunSync()
