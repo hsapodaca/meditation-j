@@ -15,24 +15,26 @@ class RelationshipEndpoints[F[_]: Sync] {
   val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
   import dsl._
 
-  implicit val entityRelationshipDecoder: EntityDecoder[F, EntityRelationship] = jsonOf[F, EntityRelationship]
+  implicit val entityRelationshipDecoder: EntityDecoder[F, EntityRelationship] =
+    jsonOf[F, EntityRelationship]
 
   def entityRoutes(
       relationshipService: RelationshipService[F]
   ): HttpRoutes[F] = {
     HttpRoutes.of[F] {
 
-      case GET -> Root / "v1" / "entities" / LongVar(id) / "relationship" =>
+      case GET -> Root / "v1" / "entities" / LongVar(id) / "relationships" =>
         for {
-          res <- relationshipService.getByEntityId(id).value
+          res <- relationshipService.listByEntityId(id)
           resp <- Ok(res.asJson)
         } yield resp
 
       case GET -> Root / "v1" / "relationships" / LongVar(id) =>
-        for {
-          res <- relationshipService.get(id).value
-          resp <- Ok(res.asJson)
-        } yield resp
+        relationshipService.get(id).value.flatMap {
+          case Right(r) => Ok(r.asJson)
+          case Left(EntityNotFoundError) =>
+            NotFound(s"Cannot find relationship.")
+        }
 
       case DELETE -> Root / "v1" / "relationships" / LongVar(id) =>
         for {
@@ -42,8 +44,8 @@ class RelationshipEndpoints[F[_]: Sync] {
 
       case req @ POST -> Root / "v1" / "relationships" =>
         val action = for {
-          relationship <- req.as[EntityRelationship]
-          result <- relationshipService.create(relationship).value
+          r <- req.as[EntityRelationship]
+          result <- relationshipService.create(r).value
         } yield result
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
@@ -54,11 +56,9 @@ class RelationshipEndpoints[F[_]: Sync] {
   }
 }
 
-
 object RelationshipEndpoints {
   def endpoints[F[_]: Sync](
-                             relationshipService: RelationshipService[F]
-                           ): HttpRoutes[F] =
+      relationshipService: RelationshipService[F]
+  ): HttpRoutes[F] =
     new RelationshipEndpoints[F].entityRoutes(relationshipService)
 }
-

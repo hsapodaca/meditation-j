@@ -31,9 +31,12 @@ class EntityService[F[_]](
   ): EitherT[F, EntityNotFoundError.type, Entity] =
     EitherT.fromOptionF(repository.get(id), EntityNotFoundError)
 
-  def delete(id: Long): F[Int] = {
-    repository.delete(id)
-  }
+  def getByParentId(id: Long)(implicit
+      F: Functor[F]
+  ): EitherT[F, EntityNotFoundError.type, Entity] =
+    EitherT.fromOptionF(repository.getByParentId(id), EntityNotFoundError)
+
+  def delete(id: Long): F[Int] = repository.delete(id)
 
   def listTherapists(pageSize: Int, offset: Int): F[List[Entity]] = {
     repository.list(EntityType.Therapist, pageSize, offset)

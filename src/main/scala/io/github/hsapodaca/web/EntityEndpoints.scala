@@ -6,7 +6,14 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.config
 import Pagination.{OffsetMatcher, PageSizeMatcher}
-import io.github.hsapodaca.alg.{Entity, EntityAlreadyExistsError, EntityIsInvalidForUpdateError, EntityNotFoundError, EntityService, ItemAlreadyExistsError}
+import io.github.hsapodaca.alg.{
+  Entity,
+  EntityAlreadyExistsError,
+  EntityIsInvalidForUpdateError,
+  EntityNotFoundError,
+  EntityService,
+  ItemAlreadyExistsError
+}
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, EntityEncoder, HttpRoutes}
@@ -21,6 +28,7 @@ class EntityEndpoints[F[_]: Sync] {
       entityService: EntityService[F]
   ): HttpRoutes[F] = {
     HttpRoutes.of[F] {
+
       case GET -> Root / "v1" / "entities" / LongVar(id) =>
         entityService.get(id).value.flatMap {
           case Right(entity) => Ok(entity.asJson)

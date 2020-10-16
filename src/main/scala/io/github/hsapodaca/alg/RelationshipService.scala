@@ -19,19 +19,16 @@ class RelationshipService[F[_]](
       F: Functor[F]
   ): F[List[EntityRelationship]] = repository.list(pageSize, offset)
 
-  def getByEntityId(id: Long)(implicit
-      F: Functor[F]
-  ): EitherT[F, EntityNotFoundError.type, EntityRelationship] =
-    EitherT.fromOptionF(repository.getByEntityId(id), EntityNotFoundError)
+  def listByEntityId(id: Long)(implicit
+                              F: Functor[F]
+  ): F[List[EntityRelationship]] = repository.listByEntityId(id)
 
   def get(id: Long)(implicit
-                              F: Functor[F]
+      F: Functor[F]
   ): EitherT[F, EntityNotFoundError.type, EntityRelationship] =
     EitherT.fromOptionF(repository.get(id), EntityNotFoundError)
 
-  def delete(id: Long): F[Int] = {
-    repository.delete(id)
-  }
+  def delete(id: Long): F[Int] = repository.delete(id)
 }
 
 object RelationshipService {

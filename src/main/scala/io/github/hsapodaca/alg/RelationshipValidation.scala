@@ -11,9 +11,9 @@ class RelationshipValidation[F[_]: Applicative](
       r: EntityRelationship
   ): EitherT[F, ItemAlreadyExistsError.type, Unit] =
     EitherT {
-      repository.getByEntityId(r.primaryEntityId) map {
-        case Some(_) => Left(ItemAlreadyExistsError)
-        case _       => Right(())
+      repository.listByEntityId(r.primaryEntityId) map {
+        case Nil      => Right(())
+        case _ => Left(ItemAlreadyExistsError)
       }
     }
 }

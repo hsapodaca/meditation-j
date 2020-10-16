@@ -59,6 +59,7 @@ case class StatusInfo(
 
 case class MeditationReader(therapist: Entity, meditation: Entity)
 
+case class Script(currentLine: String)
 
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable

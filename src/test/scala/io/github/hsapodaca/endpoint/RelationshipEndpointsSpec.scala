@@ -1,11 +1,15 @@
 package io.github.hsapodaca.endpoint
 
 import cats.effect.IO
+import cats.implicits.toSemigroupKOps
 import io.circe.generic.auto._
 import io.github.hsapodaca.alg._
 import io.github.hsapodaca.endpoint.repos.{entities, relationships}
 import io.github.hsapodaca.web.{EntityEndpoints, RelationshipEndpoints}
-import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
+import org.http4s.circe.CirceEntityCodec.{
+  circeEntityDecoder,
+  circeEntityEncoder
+}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
@@ -13,6 +17,8 @@ import org.http4s.{Response, Status, Uri}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
+import scala.::
 
 class RelationshipEndpointsSpec
     extends AnyFlatSpec
@@ -29,16 +35,22 @@ class RelationshipEndpointsSpec
     clearData
   }
 
-  s"GET /entities/id/relationship" should "respond with 200 and a list of entities" in {
-    val resp = get(s"/v1/entities/1/relationship")
+  s"GET /entities/id/relationships" should "respond with 200 and a list of entities" in {
+    val resp = get(s"/v1/entities/1/relationships")
     assert(resp.status === Status.Ok)
-    assert(resp.as[List[EntityRelationship]].unsafeRunSync().head.primaryEntityId === 1)
+    assert(
+      resp
+        .as[List[EntityRelationship]]
+        .unsafeRunSync()
+        .head
+        .primaryEntityId === 1
+    )
   }
 
   s"GET /relationships/id" should "respond with 200 and a relationship" in {
     val resp = get(s"/v1/relationships/1")
     assert(resp.status === Status.Ok)
-    assert(resp.as[List[EntityRelationship]].unsafeRunSync().head.primaryEntityId === 1)
+    assert(resp.as[EntityRelationship].unsafeRunSync().primaryEntityId === 1)
   }
 
   s"GET /relationships/nonexistent" should "respond with 404" in {
@@ -49,12 +61,17 @@ class RelationshipEndpointsSpec
   s"POST /relationships" should "not create existing relationship" in {
     val resp = post(
       s"/v1/relationships",
-      EntityRelationship(None, 1L, 2L, EntityRelationshipType.TherapistHasMeditation)
+      EntityRelationship(
+        None,
+        1L,
+        2L,
+        EntityRelationshipType.TherapistHasMeditation
+      )
     )
     assert(resp.status === Status.Conflict)
   }
 
-  s"POST, PUT and DELETE /entities and /relationship" should "succeed" in {
+  s"POST, PUT and DELETE /entities and /relationships" should "succeed" in {
     val resp = post(
       "/v1/entities",
       Entity(None, "A", "Test", "Test", EntityType.Therapist)
@@ -71,7 +88,13 @@ class RelationshipEndpointsSpec
 
     val resp3 = post(
       s"/v1/relationships",
-      EntityRelationship(None, id, targetId, EntityRelationshipType.TherapistHasMeditation))
+      EntityRelationship(
+        None,
+        id,
+        targetId,
+        EntityRelationshipType.TherapistHasMeditation
+      )
+    )
     assert(resp3.status === Status.Ok)
 
     val resp4 = delete(s"/v1/entities/$id")
@@ -100,7 +123,10 @@ class RelationshipEndpointsSpec
       .unsafeRunSync()
   }
 
-  private[this] def post(s: String, entityRelationship: EntityRelationship): Response[IO] = {
+  private[this] def post(
+      s: String,
+      entityRelationship: EntityRelationship
+  ): Response[IO] = {
     val req = POST(entityRelationship, Uri.unsafeFromString(s)).unsafeRunSync()
     RelationshipEndpoints
       .endpoints(relationships)
@@ -110,13 +136,16 @@ class RelationshipEndpointsSpec
 
   private[this] def delete(s: String): Response[IO] = {
     val req = DELETE(Uri.unsafeFromString(s)).unsafeRunSync()
-    RelationshipEndpoints
-      .endpoints(relationships)
+    (RelationshipEndpoints
+      .endpoints(relationships) <+> EntityEndpoints.endpoints(entities))
       .orNotFound(req)
       .unsafeRunSync()
   }
 
-  private[this] def put(s: String, entityRelationship: EntityRelationship): Response[IO] = {
+  private[this] def put(
+      s: String,
+      entityRelationship: EntityRelationship
+  ): Response[IO] = {
     val req = PUT(entityRelationship, Uri.unsafeFromString(s)).unsafeRunSync()
     RelationshipEndpoints
       .endpoints(relationships)

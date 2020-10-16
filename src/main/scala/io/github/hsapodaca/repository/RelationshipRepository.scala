@@ -51,8 +51,8 @@ class RelationshipRepository[F[_]](val xa: Transactor[F])(implicit
   override def get(id: Long): F[Option[EntityRelationship]] =
     select(id).option.transact(xa)
 
-  override def getByEntityId(id: Long): F[Option[EntityRelationship]] =
-    selectByEntityId(id).option.transact(xa)
+  override def listByEntityId(id: Long): F[List[EntityRelationship]] =
+    selectByEntityId(id).to[List].transact(xa)
 
   override def list(limit: Int, offset: Int): F[List[EntityRelationship]] =
     select(limit, offset).to[List].transact(xa)

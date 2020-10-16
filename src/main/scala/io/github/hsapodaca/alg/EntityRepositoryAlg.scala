@@ -8,6 +8,8 @@ trait EntityRepositoryAlg[F[_]] {
 
   def list(entityType: EntityType, limit: Int, offset: Int): F[List[Entity]]
 
+  def getByParentId(id: Long): F[Option[Entity]]
+
   def create(t: Entity): F[Entity]
 
   def update(t: Entity): F[Option[Entity]]

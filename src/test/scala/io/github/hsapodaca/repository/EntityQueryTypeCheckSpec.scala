@@ -39,6 +39,7 @@ class EntityQueryTypeCheckSpec
       check(insertValues(e))
     }
     check(select(1L))
+    check(selectByParentId(1L))
     check(deleteFrom(1L))
   }
 }

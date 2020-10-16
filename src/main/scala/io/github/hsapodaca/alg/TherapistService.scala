@@ -30,10 +30,9 @@ class TherapistService[F[_]](
       M: Monad[F]
   ): EitherT[F, EntityNotFoundError.type, MeditationReader] =
     for {
-      m <- entities.get(id)
-      r <- relationships.getByEntityId(m.id.getOrElse(1L))
-      t <- entities.get(r.targetEntityId)
-      mr = MeditationReader(m, t)
+      p <- entities.get(id)
+      t <- entities.getByParentId(id)
+      mr = MeditationReader(p, t)
     } yield mr
 }
 

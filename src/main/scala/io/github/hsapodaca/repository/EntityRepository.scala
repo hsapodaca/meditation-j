@@ -32,6 +32,13 @@ private object EntitySQL {
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
     """.query[Entity]
 
+  def selectByParentId(id: Long): Query0[Entity] =
+    sql"""
+    SELECT e.id, e.entity_name, e.summary, e.script, e.type
+    FROM entity_relationships er JOIN entities e on er.target_entity_id = e.id
+    WHERE er.primary_entity_id = $id
+    """.query[Entity]
+
   def insertValues(m: Entity): Update0 =
     sql"""
     INSERT INTO entities (entity_name, summary, script, type)
@@ -71,6 +78,12 @@ class EntityRepository[F[_]](val xa: Transactor[F])(implicit
   ): F[List[Entity]] = {
     select(entityType, limit, offset)
       .to[List]
+      .transact(xa)
+  }
+
+  override def getByParentId(parentId: Long): F[Option[Entity]] = {
+    selectByParentId(parentId)
+      .option
       .transact(xa)
   }
 
