@@ -15,7 +15,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class EntitiesSpec
+class EntityEndpointsSpec
     extends AnyFlatSpec
     with Matchers
     with BeforeAndAfter
