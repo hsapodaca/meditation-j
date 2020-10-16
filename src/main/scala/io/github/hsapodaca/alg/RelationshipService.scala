@@ -4,11 +4,16 @@ import cats._
 import cats.data.EitherT
 
 class RelationshipService[F[_]](
-    repository: RelationshipRepositoryAlg[F]
+    repository: RelationshipRepositoryAlg[F],
+    validation: RelationshipValidationAlg[F]
 ) {
   def create(relationship: EntityRelationship)(implicit
       M: Monad[F]
-  ): F[EntityRelationship] = repository.create(relationship)
+  ): EitherT[F, RelationshipAlreadyExistsError, Entity] =
+    for {
+      _ <- validation.doesNotExist(entity)
+      saved <- EitherT.liftF(repository.create(entity))
+    } yield saved
 
   def list(pageSize: Int, offset: Int)(implicit
       F: Functor[F]
@@ -26,7 +31,8 @@ class RelationshipService[F[_]](
 
 object RelationshipService {
   def apply[F[_]](
-      repository: RelationshipRepositoryAlg[F]
+      repository: RelationshipRepositoryAlg[F],
+      validation: RelationshipValidationAlg[F]
   ): RelationshipService[F] =
-    new RelationshipService[F](repository)
+    new RelationshipService[F](repository, validation)
 }
