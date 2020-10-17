@@ -62,7 +62,7 @@ Meet J:
 - **web** - endpoint routes, json encoding/decoding, error codes.
 - **config** - application, database (doobie transactor), server configuration.
 - **test** - Basic ScalaTest for now.
-- **MeditationServer** - IOApp object, entrypoint
+- **MeditationServer** - IOApp object, entry point.
 
 ## Data Model
 ### Summary
