@@ -9,7 +9,7 @@ services:
     image: postgres:latest
     environment:
       - DATABASE_HOST=127.0.0.1
-      - POSTGRES_USER=meditation-service
+      - POSTGRES_USER=meditation
       - POSTGRES_PASSWORD=meditation
       - POSTGRES_DB=meditation-service
 
