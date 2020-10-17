@@ -63,7 +63,13 @@ class MeditatorService[F[_]](
       case (Some(p), Some(c)) => Some(Meditator(p, c))
       case _                  => None
     }
-    EitherT.fromOptionF(action.transact(transactor), MeditatorNotFoundError)
+    for {
+      _ <- validation.exists(Some(id))
+      r <- EitherT.fromOptionF(
+        action.transact(transactor),
+        MeditatorNotFoundError
+      )
+    } yield r
   }
 
   def get(id: Long): F[Option[Meditator]] = {
