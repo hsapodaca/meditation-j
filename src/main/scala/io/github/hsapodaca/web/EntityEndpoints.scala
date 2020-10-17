@@ -7,7 +7,7 @@ import io.circe.syntax._
 import io.github.hsapodaca.config
 import Pagination.{OffsetMatcher, PageSizeMatcher}
 import io.github.hsapodaca.alg.service.EntityService
-import io.github.hsapodaca.alg.{Entity, EntityIsInvalidForUpdateError, EntityNotFoundError, ItemAlreadyExistsError}
+import io.github.hsapodaca.alg.{Entity, EntityNotFoundError}
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, HttpRoutes}

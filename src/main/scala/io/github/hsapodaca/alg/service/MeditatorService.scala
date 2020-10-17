@@ -3,7 +3,13 @@ package io.github.hsapodaca.alg.service
 import cats.effect.Bracket
 import doobie.Transactor
 import doobie.implicits._
-import io.github.hsapodaca.alg.{EntityRelationship, EntityRelationshipType, ItemCreationFailedError, ItemDeletionFailedError, Meditator}
+import io.github.hsapodaca.alg.{
+  EntityRelationship,
+  EntityRelationshipType,
+  ItemCreationFailedError,
+  ItemDeletionFailedError,
+  Meditator
+}
 
 class MeditatorService[F[_]](
     entities: EntityService[F],
@@ -16,7 +22,6 @@ class MeditatorService[F[_]](
       m: Meditator
   ): F[Either[ItemCreationFailedError.type, Meditator]] = {
     val action = for {
-
       friendId <- entities.create(m.friend)
       meditationId <- entities.create(m.meditation)
       _ <- relationships.create(
@@ -46,7 +51,7 @@ class MeditatorService[F[_]](
       }
     } yield (p, c) match {
       case (Some(p), Some(c)) => Right(Meditator(p, c))
-      case _ => Left(ItemDeletionFailedError)
+      case _                  => Left(ItemDeletionFailedError)
     }
     action.transact(transactor)
   }

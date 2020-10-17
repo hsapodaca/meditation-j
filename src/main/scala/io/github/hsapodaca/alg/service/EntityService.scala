@@ -1,25 +1,19 @@
 package io.github.hsapodaca.alg.service
 
-import cats.Monad
+import cats.{Functor, Monad}
 import cats.data.EitherT
 import cats.effect.Bracket
 import cats.free.Free
 import doobie.free.connection
 import doobie.{Transactor, _}
 import doobie.implicits._
-import io.github.hsapodaca.alg.{
-  Entity,
-  EntityNotFoundError,
-  EntityRepositoryAlg,
-  EntityType,
-  EntityValidation
-}
+import io.github.hsapodaca.alg.{Entity, EntityIsInvalidForUpdateError, EntityNotFoundError, EntityRepositoryAlg, EntityType, EntityValidation}
 
 class EntityService[F[_]](
     repository: EntityRepositoryAlg[F],
     validation: EntityValidation[F],
     transactor: Transactor[F]
-)(implicit ev: Bracket[F, Throwable]) {
+)(implicit F: Bracket[F, Throwable]) {
 
   def get(id: Long): ConnectionIO[Option[Entity]] =
     repository.get(id)
