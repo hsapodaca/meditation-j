@@ -1,9 +1,10 @@
 package io.github.hsapodaca.endpoint
 
 import cats.effect.IO
+import cats.implicits._
 import doobie.Transactor
 import io.github.hsapodaca.alg.service.{EntityService, MeditatorService, RelationshipService}
-import io.github.hsapodaca.alg.{EntityValidation, MeditatorValidation}
+import io.github.hsapodaca.alg.{Entity, EntityType, EntityValidation, Meditator, MeditatorAlreadyExistsError, MeditatorValidation}
 import io.github.hsapodaca.repository.db.testTransactor
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
 
@@ -11,13 +12,18 @@ package object repos {
   val transactor: Transactor[IO] = testTransactor
   val entityRepo = EntityRepository[IO]
   val relationshipRepo = RelationshipRepository[IO]
-  val entities = EntityService[IO](entityRepo, EntityValidation[IO](entityRepo, transactor), transactor)
+  val entities = EntityService[IO](
+    entityRepo,
+    EntityValidation[IO](entityRepo, transactor),
+    transactor
+  )
   val validation = MeditatorValidation[IO](entityRepo, transactor)
   val relationships = RelationshipService[IO](
     relationshipRepo,
     transactor
   )
-  val meditators = MeditatorService[IO](entities, validation, relationships, transactor)
+  val meditators =
+    MeditatorService[IO](entities, validation, relationships, transactor)
 
   def clearData = {
     val allFriends = entities.listFriends(10000, 0).unsafeRunSync()

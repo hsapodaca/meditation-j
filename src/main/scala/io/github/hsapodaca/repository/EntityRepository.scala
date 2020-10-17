@@ -52,7 +52,7 @@ private object EntitySQL {
   def updateValues(id: Long, m: Entity): Update0 =
     sql"""
     UPDATE entities
-    SET entity_name = ${m.entityName}, summary = ${m.summary}
+    SET entity_name = ${m.entityName}, summary = ${m.summary}, script = ${m.script}
     WHERE id = $id
     """.update
 }

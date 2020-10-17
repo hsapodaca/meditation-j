@@ -55,8 +55,9 @@ class MeditatorService[F[_]](
       p <- entities.get(id)
       c <- entities.getByParentId(id)
       _ <- entities.delete(id)
-      _ <- c match {
-        case Some(e) if e.id.isDefined => entities.delete(e.id.getOrElse(-1L))
+      _ <- (p, c) match {
+        case (Some(_), Some(c)) if c.id.isDefined =>
+          entities.delete(c.id.getOrElse(-1L))
       }
     } yield (p, c) match {
       case (Some(p), Some(c)) => Some(Meditator(p, c))

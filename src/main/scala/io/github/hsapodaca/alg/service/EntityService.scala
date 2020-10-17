@@ -21,6 +21,12 @@ class EntityService[F[_]](
   def getByParentId(id: Long): ConnectionIO[Option[Entity]] =
     repository.getByParentId(id)
 
+  def getByName(name: String): ConnectionIO[Option[Entity]] =
+    repository.get(name)
+
+  def getByNameAndTransact(name: String): F[Option[Entity]] =
+    repository.get(name).transact(transactor)
+
   def getAndTransact(id: Long): F[Option[Entity]] =
     repository.get(id).transact(transactor)
 

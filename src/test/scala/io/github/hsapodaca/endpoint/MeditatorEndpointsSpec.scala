@@ -1,28 +1,15 @@
 package io.github.hsapodaca.endpoint
 
 import cats.effect.IO
-import cats.implicits.toSemigroupKOps
 import io.circe.generic.auto._
 import io.github.hsapodaca.alg._
-import io.github.hsapodaca.endpoint.repos.{
-  clearData,
-  entities,
-  meditators,
-  relationships
-}
-import io.github.hsapodaca.web.{
-  EntityEndpoints,
-  MeditatorEndpoints,
-  RelationshipEndpoints
-}
-import org.http4s.circe.CirceEntityCodec.{
-  circeEntityDecoder,
-  circeEntityEncoder
-}
+import io.github.hsapodaca.endpoint.repos.meditators
+import io.github.hsapodaca.web.MeditatorEndpoints
+import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
-import org.http4s.{Response, Status, Uri}
+import org.http4s.{Response, Uri}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -33,14 +20,6 @@ class MeditatorEndpointsSpec
     with BeforeAndAfter
     with Http4sDsl[IO]
     with Http4sClientDsl[IO] {
-
-  before {
-    clearData
-  }
-
-  after {
-    clearData
-  }
 
   s"GET /meditators/id" should "respond with 200 and a body" in {
     val resp = get(s"/v1/meditators/1")
@@ -87,11 +66,18 @@ class MeditatorEndpointsSpec
     val resp = post(
       "/v1/meditators",
       Meditator(
-        Entity(None, "TestFriend", "", "...", EntityType.Friend),
-        Entity(None, "TestMeditation", "", "...", EntityType.Meditation)
+        Entity(None, "TestMeditatorFriend", "", "...", EntityType.Friend),
+        Entity(None, "TestMeditatorMeditation", "", "...", EntityType.Meditation)
       )
     )
     assert(resp.status === Ok)
+    assert(
+      resp
+        .as[Meditator]
+        .unsafeRunSync()
+        .meditation
+        .entityName === "TestMeditatorMeditation"
+    )
   }
 
   s"DELETE /meditators" should "delete existing meditator" in {
@@ -99,7 +85,13 @@ class MeditatorEndpointsSpec
       s"/v1/meditators",
       Meditator(
         Entity(None, "TestFriend", "Summary", "Script", EntityType.Friend),
-        Entity(None, "TestMeditation", "Summary", "Script", EntityType.Meditation)
+        Entity(
+          None,
+          "TestMeditation",
+          "Summary",
+          "Script",
+          EntityType.Meditation
+        )
       )
     )
     val friendId = resp.as[Meditator].unsafeRunSync().friend.id.get
@@ -114,6 +106,10 @@ class MeditatorEndpointsSpec
     }
   }
 
+  s"DELETE /meditators" should "not find a nonexistent meditator" in {
+    val resp1 = delete(s"/v1/meditators/0")
+    assert(resp1.status === NotFound)
+  }
 
   private[this] def get(s: String): Response[IO] = {
     val req = GET(Uri.unsafeFromString(s)).unsafeRunSync()
