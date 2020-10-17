@@ -1,5 +1,9 @@
 # Meditation with J
 
+
+[![Build Status](https://travis-ci.org/hsapodaca/meditation-j.svg?branch=master)](https://travis-ci.org/hsapodaca/meditation-j)
+
+
 ## Overview
 
 J is someone who has helped me when it counted. If you are struggling to regain focus, they will guide you through a brief mindfulness meditation to help you relax. (Front-end forthcoming.)
