@@ -4,7 +4,7 @@
 
 J is someone who has helped me when it counted. If you are struggling to regain focus, they will guide you through a brief mindfulness meditation to help you relax. (Front-end forthcoming.)
 
-This is an evolving attempt to grow comfortable with the cats library and with building and maintaining a proof-of-concept service from scratch using Scala, FP libraries.
+This is an evolving attempt to grow comfortable with the cats library and with building and maintaining a proof-of-concept service from scratch using Scala, functional programming libraries.
 
 ## Summary
 
@@ -58,20 +58,18 @@ Meet J:
 ## Project Overview
 
 - **alg** - all business logic resides here. Service layer, domain-specific things covered by custom code, data validations, models.
-- **repository** - all sql - postgres queries without transaction control, which is owned by service layer. Exceptions are: seeded data via flyway. Also note the cascade delete logic on relationships table.
+- **repository** - all sql - postgres queries without transaction control, which is owned by Service layer. Exceptions are: seeded data via flyway. Also note the cascade delete logic on relationships table.
 - **web** - endpoint routes, json encoding/decoding, error codes.
-
-Also see
 - **config** - application, database (doobie transactor), server configuration.
 - **test** - Basic ScalaTest for now.
 - **MeditationServer** - IOApp object, entrypoint
 
-### Data Model
-#### Summary
+## Data Model
+### Summary
 - Everything is an entity with a script.
 - Pairs of entities have one-directional relationships. (Meditator = friend -> meditation)
 
-### Also See
+## Files of Interest
 
 - build.sbt - dependencies used.
 - postgresql, flyway scripts for the database schema in resources/db.migration.
@@ -79,7 +77,7 @@ Also see
 
 ### Notes
 - doobie-scalatest tests under `repository` in tests  - check sql, `endpoint` tests test endpoints.
-- service layer has control over transactions.
+- Service layer has control over transactions.
 - Readiness check endpoint depends on database and seeded data.
 - Test coverage reports via scoverage plugin. '[80% and no less](https://www.artima.com/weblogs/viewpost.jsp?thread=204677)'.
 
