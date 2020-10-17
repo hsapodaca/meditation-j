@@ -69,7 +69,7 @@ Also see
 ### Data Model
 #### Summary
 - Everything is an entity with a script.
-- Pairs of entities have one-directional relationships. (Meditator = friend + meditation)
+- Pairs of entities have one-directional relationships. (Meditator = friend -> meditation)
 
 ### Also See
 
