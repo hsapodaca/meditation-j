@@ -2,26 +2,21 @@ package io.github.hsapodaca.endpoint
 
 import cats.effect.IO
 import doobie.Transactor
-import io.github.hsapodaca.alg.{
-  EntityService,
-  EntityValidation,
-  RelationshipService,
-  RelationshipValidation,
-  MeditatorService
-}
+import io.github.hsapodaca.alg.service.{EntityService, MeditatorService, RelationshipService}
+import io.github.hsapodaca.alg.EntityValidation
 import io.github.hsapodaca.repository.db.testTransactor
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
 
 package object repos {
   val transactor: Transactor[IO] = testTransactor
-  val entityRepo = EntityRepository[IO](transactor)
-  val relationshipRepo = RelationshipRepository[IO](transactor)
-  val entities = EntityService[IO](entityRepo, EntityValidation[IO](entityRepo))
+  val entityRepo = EntityRepository[IO]
+  val relationshipRepo = RelationshipRepository[IO]
+  val entities = EntityService[IO](entityRepo, EntityValidation[IO](entityRepo, transactor), transactor)
   val relationships = RelationshipService[IO](
     relationshipRepo,
-    RelationshipValidation[IO](relationshipRepo)
+    transactor
   )
-  val meditators = MeditatorService[IO](entities, relationships)
+  val meditators = MeditatorService[IO](entities, relationships, transactor)
 
   def clearData = {
     val allFriends = entities.listFriends(10000, 0).unsafeRunSync()
@@ -35,7 +30,7 @@ package object repos {
     (allFriends ++ allMeditations)
       .filterNot(i => seededEntityIds.contains(i.id))
       .foreach { entity =>
-        entities.delete(entity.id.get).unsafeRunSync()
+        entities.deleteAndTransact(entity.id.get).unsafeRunSync()
       }
   }
 }

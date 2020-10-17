@@ -44,7 +44,7 @@ class MeditatorEndpointsSpec
 
   s"GET /meditators/id" should "respond with 200 and a body" in {
     val resp = get(s"/v1/meditators/1")
-    assert(resp.status === Status.Ok)
+    assert(resp.status === Ok)
     assert(resp.as[Meditator].unsafeRunSync().friend.entityName === "J")
     assert(
       resp
@@ -58,7 +58,7 @@ class MeditatorEndpointsSpec
 
   s"GET /meditators/nonexistent" should "respond with 404" in {
     val resp = get(s"/v1/meditators/nonexistent")
-    assert(resp.status === Status.NotFound)
+    assert(resp.status === NotFound)
   }
 
   s"POST /meditators" should "not create existing meditator" in {
@@ -69,7 +69,7 @@ class MeditatorEndpointsSpec
         Entity(Some(2L), "", "", "", EntityType.Meditation)
       )
     )
-    assert(resp.status === Status.Conflict)
+    assert(resp.status === Conflict)
   }
 
   it should "not succeed in creating a meditator (friend with meditation) record if there's conflict" in {
@@ -80,7 +80,7 @@ class MeditatorEndpointsSpec
         Entity(None, "A", "", "...", EntityType.Meditation)
       )
     )
-    assert(resp.status === Status.Conflict)
+    assert(resp.status === Conflict)
   }
 
   it should "succeed in creating a meditator (friend with meditation) record" in {
@@ -91,11 +91,40 @@ class MeditatorEndpointsSpec
         Entity(None, "TestMeditation", "", "...", EntityType.Meditation)
       )
     )
-    assert(resp.status === Status.Ok)
+    assert(resp.status === Ok)
   }
+
+  s"DELETE /meditators" should "delete existing meditator" in {
+    val resp = post(
+      s"/v1/meditators",
+      Meditator(
+        Entity(None, "TestFriend", "Summary", "Script", EntityType.Friend),
+        Entity(None, "TestMeditation", "Summary", "Script", EntityType.Meditation)
+      )
+    )
+    val friendId = resp.as[Meditator].unsafeRunSync().friend.id
+    val meditationId = resp.as[Meditator].unsafeRunSync().meditation.id
+    val resp2 = delete(s"/v1/meditators/$friendId")
+    assert(resp2.as[Meditator].unsafeRunSync().friend.id.get === friendId)
+    for {
+      id <- List(friendId, meditationId)
+    } {
+      val resp3 = get(s"/v1/meditators/$id")
+      assert(resp3.status === NotFound)
+    }
+  }
+
 
   private[this] def get(s: String): Response[IO] = {
     val req = GET(Uri.unsafeFromString(s)).unsafeRunSync()
+    MeditatorEndpoints
+      .endpoints(meditators)
+      .orNotFound(req)
+      .unsafeRunSync()
+  }
+
+  private[this] def delete(s: String): Response[IO] = {
+    val req = DELETE(Uri.unsafeFromString(s)).unsafeRunSync()
     MeditatorEndpoints
       .endpoints(meditators)
       .orNotFound(req)

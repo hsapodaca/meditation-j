@@ -1,9 +1,8 @@
 package io.github.hsapodaca.repository
 
-import cats.effect.Bracket
-import doobie._
+import doobie.free.connection._
 import doobie.implicits._
-import doobie.util.transactor.Transactor
+import doobie.{Query0, Update0}
 import io.github.hsapodaca.alg.{EntityRelationship, RelationshipRepositoryAlg}
 
 private object RelationshipSQL {
@@ -42,38 +41,30 @@ private object RelationshipSQL {
     """.update
 }
 
-class RelationshipRepository[F[_]](val xa: Transactor[F])(implicit
-    ev: Bracket[F, Throwable]
-) extends RelationshipRepositoryAlg[F] {
+class RelationshipRepository[F[_]] extends RelationshipRepositoryAlg[F] {
 
   import RelationshipSQL._
 
-  override def get(id: Long): F[Option[EntityRelationship]] =
-    select(id).option.transact(xa)
+  override def get(id: Long): ConnectionIO[Option[EntityRelationship]] =
+    select(id).option
 
-  override def listByEntityId(id: Long): F[List[EntityRelationship]] =
-    selectByEntityId(id).to[List].transact(xa)
+  override def getByEntityId(
+      id: Long
+  ): ConnectionIO[Option[EntityRelationship]] =
+    selectByEntityId(id).option
 
-  override def list(limit: Int, offset: Int): F[List[EntityRelationship]] =
-    select(limit, offset).to[List].transact(xa)
+  override def list(
+      limit: Int,
+      offset: Int
+  ): ConnectionIO[List[EntityRelationship]] =
+    select(limit, offset).to[List]
 
-  override def create(
-      relationship: EntityRelationship
-  ): F[EntityRelationship] = {
-    insertValues(relationship)
-      .withUniqueGeneratedKeys[Long]("id")
-      .map(id => relationship.copy(id = Some(id)))
-      .transact(xa)
-  }
+  override def create(r: EntityRelationship): ConnectionIO[Long] =
+    insertValues(r).withUniqueGeneratedKeys[Long]("id")
 
-  override def delete(id: Long): F[Int] = {
-    deleteFrom(id).run.transact(xa)
-  }
+  override def delete(id: Long): ConnectionIO[Int] = deleteFrom(id).run
 }
 
 object RelationshipRepository {
-  def apply[F[_]](
-      xa: Transactor[F]
-  )(implicit ev: Bracket[F, Throwable]): RelationshipRepository[F] =
-    new RelationshipRepository(xa)
+  def apply[F[_]]: RelationshipRepository[F] = new RelationshipRepository()
 }

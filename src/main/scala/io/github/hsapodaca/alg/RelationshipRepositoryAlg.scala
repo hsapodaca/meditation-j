@@ -1,14 +1,17 @@
 package io.github.hsapodaca.alg
 
+import doobie.free.connection.ConnectionIO
+
 trait RelationshipRepositoryAlg[F[_]] {
 
-  def listByEntityId(id: Long): F[List[EntityRelationship]]
+  def create(r: EntityRelationship): ConnectionIO[Long]
 
-  def get(id: Long): F[Option[EntityRelationship]]
+  def delete(id: Long): ConnectionIO[Int]
 
-  def list(limit: Int, offset: Int): F[List[EntityRelationship]]
+  def get(id: Long): ConnectionIO[Option[EntityRelationship]]
 
-  def create(script: EntityRelationship): F[EntityRelationship]
+  def getByEntityId(id: Long): ConnectionIO[Option[EntityRelationship]]
 
-  def delete(id: Long): F[Int]
+  def list(limit: Int, offset: Int): ConnectionIO[List[EntityRelationship]]
+
 }

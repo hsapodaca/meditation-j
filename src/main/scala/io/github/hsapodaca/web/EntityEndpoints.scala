@@ -6,17 +6,11 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.config
 import Pagination.{OffsetMatcher, PageSizeMatcher}
-import io.github.hsapodaca.alg.{
-  Entity,
-  EntityAlreadyExistsError,
-  EntityIsInvalidForUpdateError,
-  EntityNotFoundError,
-  EntityService,
-  ItemAlreadyExistsError
-}
+import io.github.hsapodaca.alg.service.EntityService
+import io.github.hsapodaca.alg.{Entity, EntityIsInvalidForUpdateError, EntityNotFoundError, ItemAlreadyExistsError}
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{EntityDecoder, EntityEncoder, HttpRoutes}
+import org.http4s.{EntityDecoder, HttpRoutes}
 
 class EntityEndpoints[F[_]: Sync] {
   val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
@@ -30,10 +24,12 @@ class EntityEndpoints[F[_]: Sync] {
     HttpRoutes.of[F] {
 
       case GET -> Root / "v1" / "entities" / LongVar(id) =>
-        entityService.get(id).value.flatMap {
-          case Right(entity) => Ok(entity.asJson)
-          case Left(EntityNotFoundError) =>
-            NotFound("The entity was not found.")
+        val action = for {
+          res <- entityService.getAndTransact(id)
+        } yield res
+        action flatMap {
+          case Some(entity) => Ok(entity.asJson)
+          case None => NotFound("The entity was not found.")
         }
 
       case GET -> Root / "v1" / "entities" / "friends" :? PageSizeMatcher(
@@ -58,32 +54,15 @@ class EntityEndpoints[F[_]: Sync] {
           resp <- Ok(res.asJson)
         } yield resp
 
-      case DELETE -> Root / "v1" / "entities" / LongVar(id) =>
-        for {
-          _ <- entityService.delete(id)
-          resp <- Ok()
-        } yield resp
-
-      case req @ POST -> Root / "v1" / "entities" =>
-        val action = for {
-          entity <- req.as[Entity]
-          result <- entityService.create(entity).value
-        } yield result
-        action.flatMap {
-          case Right(entity) => Ok(entity.asJson)
-          case Left(ItemAlreadyExistsError) =>
-            Conflict(s"This entity already exists.")
-        }
-
       case req @ PUT -> Root / "v1" / "entities" / LongVar(id) =>
         val action = for {
           entity <- req.as[Entity]
-          result <- entityService.update(entity.copy(id = Some(id))).value
-        } yield result
-        action.flatMap {
+          resp <- entityService.updateAndTransact(id, entity).value
+        } yield resp
+
+        action flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(EntityIsInvalidForUpdateError(m)) =>
-            BadRequest(s"The entity ${m.entityName} cannot be updated.")
+          case Left(EntityNotFoundError) => NotFound(s"The entity id $id is not found.")
         }
     }
   }

@@ -22,24 +22,21 @@ class RelationshipEndpointsSpec
     with Http4sDsl[IO]
     with Http4sClientDsl[IO] {
 
-  before {
-    clearData
-  }
-
-  after {
-    clearData
-  }
-
   s"GET /entities/id/relationships" should "respond with 200 and a list of entities" in {
     val resp = get(s"/v1/entities/1/relationships")
     assert(resp.status === Status.Ok)
     assert(
       resp
-        .as[List[EntityRelationship]]
+        .as[Option[EntityRelationship]]
         .unsafeRunSync()
         .head
         .primaryEntityId === 1
     )
+  }
+
+  it should "respond with 404 to nonexistent one" in {
+    val resp = get(s"/v1/entities/4/relationships")
+    assert(resp.status === Status.NotFound)
   }
 
   s"GET /relationships/id" should "respond with 200 and a relationship" in {
@@ -48,100 +45,15 @@ class RelationshipEndpointsSpec
     assert(resp.as[EntityRelationship].unsafeRunSync().primaryEntityId === 1)
   }
 
-  s"GET /relationships/nonexistent" should "respond with 404" in {
+  it should "respond with 404 to nonexistent one" in {
     val resp = get(s"/v1/relationships/nonexistent")
     assert(resp.status === Status.NotFound)
-  }
-
-  s"POST /relationships" should "not create existing relationship" in {
-    val resp = post(
-      s"/v1/relationships",
-      EntityRelationship(
-        None,
-        1L,
-        2L,
-        EntityRelationshipType.FriendHasMeditation
-      )
-    )
-    assert(resp.status === Status.Conflict)
-  }
-
-  s"POST, PUT and DELETE /entities and /relationships for meditator" should "succeed" in {
-    val resp = post(
-      "/v1/entities",
-      Entity(None, "A", "Test", "Test", EntityType.Friend)
-    )
-    assert(resp.status === Status.Ok)
-    val id = resp.as[Entity].unsafeRunSync().id.get
-
-    val resp2 = post(
-      "/v1/entities",
-      Entity(None, "Meditation", "", "", EntityType.Meditation)
-    )
-    assert(resp2.status === Status.Ok)
-    val targetId = resp2.as[Entity].unsafeRunSync().id.get
-
-    val resp3 = post(
-      s"/v1/relationships",
-      EntityRelationship(
-        None,
-        id,
-        targetId,
-        EntityRelationshipType.FriendHasMeditation
-      )
-    )
-    assert(resp3.status === Status.Ok)
-
-    val resp4 = delete(s"/v1/entities/$id")
-    assert(resp4.status === Status.Ok)
-
-    val resp5 = delete(s"/v1/entities/$targetId")
-    assert(resp5.status === Status.Ok)
-
-    val resp6 = get(s"/v1/entities/$id/relationship")
-    assert(resp6.status === Status.NotFound)
+    val resp2 = get(s"/v1/relationships/0")
+    assert(resp2.status === Status.NotFound)
   }
 
   private[this] def get(s: String): Response[IO] = {
     val req = GET(Uri.unsafeFromString(s)).unsafeRunSync()
-    RelationshipEndpoints
-      .endpoints(relationships)
-      .orNotFound(req)
-      .unsafeRunSync()
-  }
-
-  private[this] def post(s: String, entity: Entity): Response[IO] = {
-    val req = POST(entity, Uri.unsafeFromString(s)).unsafeRunSync()
-    EntityEndpoints
-      .endpoints(entities)
-      .orNotFound(req)
-      .unsafeRunSync()
-  }
-
-  private[this] def post(
-      s: String,
-      entityRelationship: EntityRelationship
-  ): Response[IO] = {
-    val req = POST(entityRelationship, Uri.unsafeFromString(s)).unsafeRunSync()
-    RelationshipEndpoints
-      .endpoints(relationships)
-      .orNotFound(req)
-      .unsafeRunSync()
-  }
-
-  private[this] def delete(s: String): Response[IO] = {
-    val req = DELETE(Uri.unsafeFromString(s)).unsafeRunSync()
-    (RelationshipEndpoints
-      .endpoints(relationships) <+> EntityEndpoints.endpoints(entities))
-      .orNotFound(req)
-      .unsafeRunSync()
-  }
-
-  private[this] def put(
-      s: String,
-      entityRelationship: EntityRelationship
-  ): Response[IO] = {
-    val req = PUT(entityRelationship, Uri.unsafeFromString(s)).unsafeRunSync()
     RelationshipEndpoints
       .endpoints(relationships)
       .orNotFound(req)

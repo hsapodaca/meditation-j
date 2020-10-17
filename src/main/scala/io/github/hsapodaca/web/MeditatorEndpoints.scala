@@ -5,6 +5,7 @@ import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.alg._
+import io.github.hsapodaca.alg.service.MeditatorService
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
@@ -23,25 +24,34 @@ class MeditatorEndpoints[F[_]: Sync] {
 
        case GET -> Root / "v1" / "meditators" / LongVar(id) => {
          val action = for {
-           res <- meditatorService.get(id).value
+           res <- meditatorService.get(id)
          } yield res
          action.flatMap {
-           case Right(t) => Ok(t.asJson)
-           case Left(EntityNotFoundError) =>
-             NotFound(s"This meditator was not found.")
+           case Some(t) => Ok(t.asJson)
+           case None => NotFound(s"Meditator not found.")
          }
        }
 
       case req @ POST -> Root / "v1" / "meditators" =>
         val action = for {
           r <- req.as[Meditator]
-          result <- meditatorService.create(r).value
+          result <- meditatorService.create(r)
         } yield result
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(ItemAlreadyExistsError) =>
-            Conflict(s"This meditator already exists.")
+          case Left(ItemCreationFailedError) =>
+            BadRequest(s"Failed to create a meditator.")
         }
+
+       case DELETE -> Root / "v1" / "meditators" / LongVar(id) =>
+         val action = for {
+           result <- meditatorService.delete(id)
+         } yield result
+         action.flatMap {
+           case Right(entity) => Ok(entity.asJson)
+           case Left(ItemDeletionFailedError) =>
+             BadRequest(s"Failed to delete a meditator.")
+         }
     }
   }
 }

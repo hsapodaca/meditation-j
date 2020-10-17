@@ -1,17 +1,10 @@
 package io.github.hsapodaca.repository
 
 import cats.data.OptionT
-import cats.effect.Bracket
 import cats.syntax.all._
 import doobie._
 import doobie.implicits._
-import doobie.util.transactor.Transactor
-import io.github.hsapodaca.alg.{
-  Entity,
-  EntityRepositoryAlg,
-  EntityType,
-  Meditator
-}
+import io.github.hsapodaca.alg.{Entity, EntityRepositoryAlg, EntityType}
 
 private object EntitySQL {
 
@@ -64,40 +57,35 @@ private object EntitySQL {
     """.update
 }
 
-class EntityRepository[F[_]](val xa: Transactor[F])(implicit
-    ev: Bracket[F, Throwable]
-) extends EntityRepositoryAlg[F] {
+class EntityRepository[F[_]] extends EntityRepositoryAlg[F] {
 
   import EntitySQL._
 
-  override def get(id: Long): F[Option[Entity]] =
-    select(id).option.transact(xa)
+  override def get(id: Long): ConnectionIO[Option[Entity]] = select(id).option
 
-  override def get(name: String): F[Option[Entity]] =
-    select(name).option.transact(xa)
+  override def get(name: String): ConnectionIO[Option[Entity]] =
+    select(name).option
 
   override def list(
       entityType: EntityType,
       limit: Int,
       offset: Int
-  ): F[List[Entity]] = {
+  ): ConnectionIO[List[Entity]] = {
     select(entityType, limit, offset)
       .to[List]
-      .transact(xa)
   }
 
-  override def getByParentId(parentId: Long): F[Option[Entity]] = {
-    selectByParentId(parentId).option
-      .transact(xa)
+  override def getByParentId(
+      id: Long
+  ): ConnectionIO[Option[Entity]] = {
+    selectByParentId(id).option
   }
 
-  override def create(m: Entity): F[Entity] =
+  override def create(m: Entity): ConnectionIO[Long] =
     insertValues(m)
       .withUniqueGeneratedKeys[Long]("id")
-      .map(id => m.copy(id = Some(id)))
-      .transact(xa)
 
-  override def update(m: Entity): F[Option[Entity]] =
+  override def update(m: Entity): ConnectionIO[Option[Entity]] =
     OptionT
       .fromOption[ConnectionIO](m.id)
       .semiflatMap { id =>
@@ -105,14 +93,10 @@ class EntityRepository[F[_]](val xa: Transactor[F])(implicit
           .as(m)
       }
       .value
-      .transact(xa)
 
-  override def delete(id: Long): F[Int] = deleteFrom(id).run.transact(xa)
+  override def delete(id: Long): ConnectionIO[Int] = deleteFrom(id).run
 }
 
 object EntityRepository {
-  def apply[F[_]](
-      xa: Transactor[F]
-  )(implicit ev: Bracket[F, Throwable]): EntityRepository[F] =
-    new EntityRepository(xa)
+  def apply[F[_]]: EntityRepository[F] = new EntityRepository()
 }
