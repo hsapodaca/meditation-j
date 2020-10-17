@@ -102,8 +102,8 @@ class MeditatorEndpointsSpec
         Entity(None, "TestMeditation", "Summary", "Script", EntityType.Meditation)
       )
     )
-    val friendId = resp.as[Meditator].unsafeRunSync().friend.id
-    val meditationId = resp.as[Meditator].unsafeRunSync().meditation.id
+    val friendId = resp.as[Meditator].unsafeRunSync().friend.id.get
+    val meditationId = resp.as[Meditator].unsafeRunSync().meditation.id.get
     val resp2 = delete(s"/v1/meditators/$friendId")
     assert(resp2.as[Meditator].unsafeRunSync().friend.id.get === friendId)
     for {
