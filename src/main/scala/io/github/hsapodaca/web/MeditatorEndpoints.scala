@@ -22,36 +22,36 @@ class MeditatorEndpoints[F[_]: Sync] {
   ): HttpRoutes[F] = {
     HttpRoutes.of[F] {
 
-       case GET -> Root / "v1" / "meditators" / LongVar(id) => {
-         val action = for {
-           res <- meditatorService.get(id)
-         } yield res
-         action.flatMap {
-           case Some(t) => Ok(t.asJson)
-           case None => NotFound(s"Meditator not found.")
-         }
-       }
+      case GET -> Root / "v1" / "meditators" / LongVar(id) => {
+        val action = for {
+          res <- meditatorService.get(id)
+        } yield res
+        action.flatMap {
+          case Some(t) => Ok(t.asJson)
+          case None    => NotFound(s"Meditator not found.")
+        }
+      }
 
       case req @ POST -> Root / "v1" / "meditators" =>
         val action = for {
           r <- req.as[Meditator]
-          result <- meditatorService.create(r)
+          result <- meditatorService.create(r).value
         } yield result
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(ItemCreationFailedError) =>
-            BadRequest(s"Failed to create a meditator.")
+          case Left(MeditatorAlreadyExistsError) =>
+            Conflict(s"Meditator already exists.")
         }
 
-       case DELETE -> Root / "v1" / "meditators" / LongVar(id) =>
-         val action = for {
-           result <- meditatorService.delete(id)
-         } yield result
-         action.flatMap {
-           case Right(entity) => Ok(entity.asJson)
-           case Left(ItemDeletionFailedError) =>
-             BadRequest(s"Failed to delete a meditator.")
-         }
+      case DELETE -> Root / "v1" / "meditators" / LongVar(id) =>
+        val action = for {
+          result <- meditatorService.delete(id).value
+        } yield result
+        action.flatMap {
+          case Right(entity) => Ok(entity.asJson)
+          case Left(MeditatorNotFoundError) =>
+            NotFound(s"Meditator was not found.")
+        }
     }
   }
 }

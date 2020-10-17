@@ -5,7 +5,7 @@ import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.alg.service.MeditatorService
-import io.github.hsapodaca.alg.{EntityNotFoundError, StatusInfo}
+import io.github.hsapodaca.alg.{MeditatorNotFoundError, StatusInfo}
 import org.http4s.HttpRoutes
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl

@@ -61,12 +61,7 @@ case class Script(currentLine: String)
 
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable
+case object MeditatorNotFoundError extends ValidationError
+case object EntityAlreadyExistsError extends ValidationError
 case object EntityNotFoundError extends ValidationError
-case object ItemAlreadyExistsError extends ValidationError
-
-case class EntityAlreadyExistsError(m: Entity) extends ValidationError
-case class EntityIsInvalidForUpdateError(m: Entity) extends ValidationError
-
-sealed trait SystemError extends Product with Serializable
-case object ItemCreationFailedError extends SystemError
-case object ItemDeletionFailedError extends SystemError
+case object MeditatorAlreadyExistsError extends ValidationError

@@ -1,17 +1,17 @@
 package io.github.hsapodaca.alg.service
 
-import cats.{Functor, Monad}
+import cats.Monad
 import cats.data.EitherT
 import cats.effect.Bracket
 import cats.free.Free
 import doobie.free.connection
 import doobie.{Transactor, _}
 import doobie.implicits._
-import io.github.hsapodaca.alg.{Entity, EntityIsInvalidForUpdateError, EntityNotFoundError, EntityRepositoryAlg, EntityType, EntityValidation}
+import io.github.hsapodaca.alg.{Entity, EntityNotFoundError, EntityRepositoryAlg, EntityType, EntityValidationAlg, MeditatorNotFoundError}
 
 class EntityService[F[_]](
     repository: EntityRepositoryAlg[F],
-    validation: EntityValidation[F],
+    validation: EntityValidationAlg[F],
     transactor: Transactor[F]
 )(implicit F: Bracket[F, Throwable]) {
 
@@ -48,13 +48,14 @@ class EntityService[F[_]](
   def updateAndTransact(id: Long, e: Entity)(implicit
       M: Monad[F]
   ): EitherT[F, EntityNotFoundError.type, Entity] = {
-    val action: Free[connection.ConnectionOp, Option[Entity]] = for {
+    val action = for {
       _ <- repository.update(e)
       r <- repository.get(id)
     } yield r
     for {
       _ <- validation.exists(e.id)
-      r <- EitherT.fromOptionF(action.transact(transactor), EntityNotFoundError)
+      r <-
+        EitherT.fromOptionF(action.transact(transactor), EntityNotFoundError)
     } yield r
   }
 }
@@ -62,7 +63,7 @@ class EntityService[F[_]](
 object EntityService {
   def apply[F[_]](
       repository: EntityRepositoryAlg[F],
-      validation: EntityValidation[F],
+      validation: EntityValidationAlg[F],
       transactor: Transactor[F]
   )(implicit ev: Bracket[F, Throwable]): EntityService[F] =
     new EntityService[F](repository, validation, transactor)

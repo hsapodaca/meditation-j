@@ -3,8 +3,8 @@ package io.github.hsapodaca.endpoint
 import cats.effect.{Blocker, ConcurrentEffect, ContextShift, IO, Resource, Timer, _}
 import cats.implicits._
 import doobie.util.ExecutionContexts
-import io.github.hsapodaca.alg.service.{EntityService, RelationshipService, MeditatorService}
-import io.github.hsapodaca.alg.{EntityValidation}
+import io.github.hsapodaca.alg.service.{EntityService, MeditatorService, RelationshipService}
+import io.github.hsapodaca.alg.{EntityValidation, MeditatorValidation}
 import io.github.hsapodaca.config
 import io.github.hsapodaca.config.DatabaseConfig
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
@@ -36,7 +36,8 @@ object EntityServer extends IOApp {
       entityAlg = EntityService[F](entityRepo, entityValidation, xa)
       relationshipRepo = RelationshipRepository[F]
       relationshipAlg = RelationshipService[F](relationshipRepo, xa)
-      meditatorAlg = MeditatorService[F](entityAlg, relationshipAlg, xa)
+      meditatorValidation = MeditatorValidation[F](entityRepo, xa)
+      meditatorAlg = MeditatorService[F](entityAlg, meditatorValidation, relationshipAlg, xa)
       httpApp = (
           ReadinessCheckEndpoints.endpoints[F](meditatorAlg) <+>
             EntityEndpoints.endpoints[F](entityAlg) <+>

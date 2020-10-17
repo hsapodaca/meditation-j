@@ -4,7 +4,7 @@ import cats.data.OptionT
 import cats.syntax.all._
 import doobie._
 import doobie.implicits._
-import io.github.hsapodaca.alg.{Entity, EntityRepositoryAlg, EntityType}
+import io.github.hsapodaca.alg.{Entity, EntityRepositoryAlg, EntityType, MeditatorValidationAlg}
 
 private object EntitySQL {
 
@@ -67,17 +67,17 @@ class EntityRepository[F[_]] extends EntityRepositoryAlg[F] {
     select(name).option
 
   override def list(
-      entityType: EntityType,
-      limit: Int,
-      offset: Int
-  ): ConnectionIO[List[Entity]] = {
+                     entityType: EntityType,
+                     limit: Int,
+                     offset: Int
+                   ): ConnectionIO[List[Entity]] = {
     select(entityType, limit, offset)
       .to[List]
   }
 
   override def getByParentId(
-      id: Long
-  ): ConnectionIO[Option[Entity]] = {
+                              id: Long
+                            ): ConnectionIO[Option[Entity]] = {
     selectByParentId(id).option
   }
 
