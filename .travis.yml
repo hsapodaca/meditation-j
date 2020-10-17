@@ -6,4 +6,5 @@ env:
   - DOCKER_COMPOSE_VERSION=1.4.2
 
 script:
-  - docker-compose up; sbt clean test coverageReport
+  - docker-compose up
+  - sbt clean test coverageReport
