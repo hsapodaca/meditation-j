@@ -8,7 +8,7 @@ This is an evolving attempt to grow comfortable with the cats library and with b
 
 ## Summary
 
-The project contains a set of API endpoints (Scala, http4s, circe, doobie, cats) for managing and interacting with someone reciting a meditation script.
+The project contains a set of API endpoints ([Scala](https://scala-lang.org/), [http4s](https://http4s.org/), [circe](https://github.com/circe/circe), [doobie](https://github.com/tpolecat/doobie), [cats](https://typelevel.org/cats/)) for managing and interacting with someone reciting a meditation script.
 
 ## Getting Started
 
@@ -57,11 +57,13 @@ Meet J:
     
 ## Project Overview
 
-- **config** - application, database (doobie transactor), server configuration.
+- **alg** - all business logic resides here. Service layer, domain-specific things covered by custom code, data validations, models.
 - **repository** - all sql - postgres queries without transaction control, which is owned by service layer. Exceptions are: seeded data via flyway. Also note the cascade delete logic on relationships table.
-- **alg** All business logic. Service layer. Domain-specific things covered by custom code, data validations, models.
 - **web** - endpoint routes, json encoding/decoding, error codes.
-- **test** - ScalaTest. Will branch out.
+
+Also see
+- **config** - application, database (doobie transactor), server configuration.
+- **test** - Basic ScalaTest for now.
 - **MeditationServer** - IOApp object, entrypoint
 
 ### Data Model
@@ -79,9 +81,9 @@ Meet J:
 - doobie-scalatest tests under `repository` in tests  - check sql, `endpoint` tests test endpoints.
 - service layer has control over transactions.
 - Readiness check endpoint depends on database and seeded data.
-- Test coverage reports via scoverage plugin. [80% and no less](https://www.artima.com/weblogs/viewpost.jsp?thread=204677)'.
+- Test coverage reports via scoverage plugin. '[80% and no less](https://www.artima.com/weblogs/viewpost.jsp?thread=204677)'.
 
 ## References
 - [http4s template](https://http4s.org/v0.21/)
 - [doobie docs](https://tpolecat.github.io/doobie/index.html) 
-- [influenced by](https://github.com/pauljamescleary/scala-pet-store)
+- [influenced by this](https://github.com/pauljamescleary/scala-pet-store)
