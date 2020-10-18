@@ -90,7 +90,7 @@ J's meditation:
 ## Project Overview
 
 - **alg** - all business logic resides here. Service layer, domain-specific things covered by custom code, data validations, models.
-- **repository** - all sql - postgres queries without transaction control, which is owned by Service layer. Exceptions are: seeded data via flyway. Also note the cascade delete logic on relationships table.
+- **repository** - all sql - postgres queries without transaction control, which is owned by service layer. Exceptions are: seeded data via flyway. Also note the cascade delete logic on relationships table.
 - **web** - endpoint routes, json encoding/decoding, error codes.
 - **config** - application, database (doobie transactor), server configuration.
 - **test** - Basic ScalaTest for now.
@@ -100,6 +100,10 @@ J's meditation:
 ### Summary
 - Everything is an entity with a script.
 - Pairs of entities have one-directional relationships. (Meditator = friend -> meditation)
+- Scripts are plaintext: each line is a step, either `Speech` or `Pause`. Pauses track how many seconds to pause for.
+  - `[Pause.]` *(for 1 second default)*
+  - `[Pause 3 seconds]`
+  - `[Pause one Second ]`
 
 ## Files of Interest
 
