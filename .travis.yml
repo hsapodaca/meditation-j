@@ -1,5 +1,7 @@
 language: scala
+
 scala:
    - 2.13.3
+
 services:
   - postgresql
