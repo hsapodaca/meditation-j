@@ -71,6 +71,26 @@ class EntityEndpointsSpec
     assert(resp.status === Status.NotFound)
   }
 
+  "GET /entities/id/script" should "respond with 200 and a script" in {
+    val resp = get(s"/v1/entities/2/script")
+    assert(resp.status === Status.Ok)
+    assert(
+      resp
+        .as[Script]
+        .unsafeRunSync()
+        .steps
+        .head
+        .text === Some(
+        "I invite you to sit in a comfortable yet upright position in your chair"
+      )
+    )
+  }
+
+  it should "respond with 404 for nonexistent id" in {
+    val resp = get(s"/v1/entities/0/script")
+    assert(resp.status === Status.NotFound)
+  }
+
   "PUT /entities/id" should "successfully edit an entity" in {
     val meditator = Meditator(
       Entity(None, "friendTest", "summary", "script", EntityType.Friend),

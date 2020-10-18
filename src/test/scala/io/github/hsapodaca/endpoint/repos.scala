@@ -4,7 +4,7 @@ import cats.effect.IO
 import cats.implicits._
 import doobie.Transactor
 import io.github.hsapodaca.alg.service.{EntityService, MeditatorService, RelationshipService}
-import io.github.hsapodaca.alg.{Entity, EntityType, EntityValidation, Meditator, MeditatorAlreadyExistsError, MeditatorValidation}
+import io.github.hsapodaca.alg.{Entity, EntityType, EntityValidation, Meditator, MeditatorAlreadyExistsError, MeditatorValidation, NarrativeTranslation}
 import io.github.hsapodaca.repository.db.testTransactor
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
 
@@ -15,6 +15,7 @@ package object repos {
   val entities = EntityService[IO](
     entityRepo,
     EntityValidation[IO](entityRepo, transactor),
+    NarrativeTranslation[IO],
     transactor
   )
   val validation = MeditatorValidation[IO](entityRepo, transactor)

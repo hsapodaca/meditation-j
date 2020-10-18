@@ -8,7 +8,7 @@
 
 J is someone who has helped me when it counted. If you are struggling to regain focus, they will guide you through a brief mindfulness meditation to help you relax. (Front-end forthcoming.)
 
-This is an evolving attempt to grow comfortable with the cats library and with building and maintaining a proof-of-concept service from scratch using Scala, functional programming libraries.
+This is an evolving attempt to grow comfortable with the cats library and with building and maintaining a proof-of-concept service from scratch using Scala, functional programming concepts.
 
 ## Summary
 
@@ -30,7 +30,7 @@ Or launch on localhost:8080
 
     sbt run 
 
-You will be able to see:
+And confirm status
 
     curl http://localhost:8080/status | jq
     {
@@ -39,9 +39,37 @@ You will be able to see:
       "friend": "J"
     }    
     
-Meet J: 
+Meet J
 
     curl http://localhost:8080/v1/meditators/1 | jq
+
+J's meditation:
+
+    curl http://localhost:8080/v1/entities/2/script | jq
+    
+    {
+      "steps": [
+        {
+          "type": "Speech",
+          "text": "I invite you to sit in a comfortable yet upright position in your chair"
+        },
+        {
+          "type": "Speech",
+          "text": "with your feet flat on the floor,"
+        },
+        {
+          "type": "Speech",
+          "text": "your arms and legs uncrossed,"
+        },
+        {
+          "type": "Speech",
+          "text": "and your hands resting in your lap."
+        },
+        {
+          "type": "Pause",
+          "waitFor": 3
+        }
+
 
 ## Endpoints
 
@@ -83,7 +111,7 @@ Meet J:
 - doobie-scalatest tests under `repository` in tests  - check sql, `endpoint` tests test endpoints.
 - Service layer has control over transactions.
 - Readiness check endpoint depends on database and seeded data.
-- Test coverage reports via scoverage plugin. Let there be more to life than ['80% and no less'](https://testing.googleblog.com/2010/07/code-coverage-goal-80-and-no-less.html)'.
+- Test coverage reports via scoverage plugin. Let there be more to life than ['80% and no less'](https://testing.googleblog.com/2010/07/code-coverage-goal-80-and-no-less.html).
 
 ## References
 - [http4s template](https://http4s.org/v0.21/)

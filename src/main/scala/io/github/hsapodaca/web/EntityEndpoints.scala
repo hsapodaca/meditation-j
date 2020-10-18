@@ -7,7 +7,11 @@ import io.circe.syntax._
 import io.github.hsapodaca.config
 import Pagination.{OffsetMatcher, PageSizeMatcher}
 import io.github.hsapodaca.alg.service.EntityService
-import io.github.hsapodaca.alg.{Entity, EntityNotFoundError, MeditatorNotFoundError}
+import io.github.hsapodaca.alg.{
+  Entity,
+  EntityNotFoundError,
+  MeditatorNotFoundError
+}
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, HttpRoutes}
@@ -29,7 +33,16 @@ class EntityEndpoints[F[_]: Sync] {
         } yield res
         action flatMap {
           case Some(entity) => Ok(entity.asJson)
-          case None => NotFound("The entity was not found.")
+          case None         => NotFound("The entity was not found.")
+        }
+
+      case GET -> Root / "v1" / "entities" / LongVar(id)/ "script" =>
+        val action = for {
+          res <- entityService.getNarrativeAndTransact(id)
+        } yield res
+        action flatMap {
+          case Some(entity) => Ok(entity.asJson.deepDropNullValues)
+          case None         => NotFound("The entity was not found.")
         }
 
       case GET -> Root / "v1" / "entities" / "friends" :? PageSizeMatcher(
@@ -62,7 +75,8 @@ class EntityEndpoints[F[_]: Sync] {
 
         action flatMap {
           case Right(entity) => Ok(entity.asJson)
-          case Left(EntityNotFoundError) => NotFound(s"The entity id $id is not found.")
+          case Left(EntityNotFoundError) =>
+            NotFound(s"The entity id $id is not found.")
         }
     }
   }

@@ -2,7 +2,6 @@ package io.github.hsapodaca.alg
 
 import enumeratum._
 
-// Database
 case class Entity(
     id: Option[Long],
     entityName: String,
@@ -11,15 +10,30 @@ case class Entity(
     `type`: EntityType
 )
 
+case class Script(
+    steps: List[Action]
+)
+
+case class Action(
+    `type`: ActionType,
+    waitFor: Option[Int],
+    text: Option[String]
+)
+
+sealed trait ActionType extends EnumEntry
+case object ActionType extends Enum[ActionType] with CirceEnum[ActionType] {
+  val values = findValues
+  case object Speech extends ActionType
+  case object Pause extends ActionType
+}
+
 case class EntityRelationship(
     id: Option[Long],
     primaryEntityId: Long,
     targetEntityId: Long,
-    `type`: EntityRelationshipType =
-      EntityRelationshipType.FriendHasMeditation
+    `type`: EntityRelationshipType = EntityRelationshipType.FriendHasMeditation
 )
 
-// Database and JSON
 sealed trait EntityType extends EnumEntry
 case object EntityType
     extends Enum[EntityType]
@@ -50,9 +64,9 @@ case object SystemStatus
 }
 
 case class StatusInfo(
-                       status: SystemStatus = SystemStatus.Up,
-                       meditation: String,
-                       friend: String
+    status: SystemStatus = SystemStatus.Up,
+    meditation: String,
+    friend: String
 )
 
 case class Meditator(friend: Entity, meditation: Entity)
@@ -63,3 +77,4 @@ case object MeditatorNotFoundError extends ValidationError
 case object EntityAlreadyExistsError extends ValidationError
 case object EntityNotFoundError extends ValidationError
 case object MeditatorAlreadyExistsError extends ValidationError
+case object UnprocessableNarrativeScriptError extends ValidationError

@@ -26,8 +26,10 @@ object DatabaseConfig {
 
   def init[F[_]](db: DatabaseConnection)(implicit S: Sync[F]): F[Unit] =
     S.delay {
-      val flyway =
+      val flyway = {
         Flyway.configure().dataSource(db.url, db.user, db.password).load()
+      }
+      flyway.clean()
       flyway.migrate()
       ()
     }
