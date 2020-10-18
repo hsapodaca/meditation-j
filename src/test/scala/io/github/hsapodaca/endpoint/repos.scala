@@ -30,7 +30,7 @@ package object repos {
     val allMeditations = entities.listMeditations(10000, 0).unsafeRunSync()
     val seededFriends = allFriends.filter(_.entityName == "J")
     val seededMeditations =
-      allMeditations.filter(_.entityName == "Leaves on a Stream Meditation")
+      allMeditations.filter(_.entityName == "Leaves on a Stream")
 
     val seededEntityIds = (seededFriends ++ seededMeditations).map(_.id)
 

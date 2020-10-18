@@ -23,7 +23,7 @@ class ReadinessCheckEndpointsSpec extends AnyFlatSpec with Matchers {
   it should "return status details" in {
     assert(
       resp.as[StatusInfo].unsafeRunSync() === StatusInfo(
-        meditation = "Leaves on a Stream Meditation",
+        meditation = "Leaves on a Stream",
         friend = "J"
       )
     )

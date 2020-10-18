@@ -57,8 +57,6 @@ case class StatusInfo(
 
 case class Meditator(friend: Entity, meditation: Entity)
 
-case class Script(currentLine: String)
-
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable
 case object MeditatorNotFoundError extends ValidationError

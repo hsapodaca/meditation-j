@@ -35,7 +35,7 @@ You will be able to see:
     curl http://localhost:8080/status | jq
     {
       "status": "Up",
-      "meditation": "Leaves on a Stream Meditation",
+      "meditation": "Leaves on a Stream",
       "friend": "J"
     }    
     
