@@ -61,7 +61,12 @@ class EntityEndpointsSpec
     assert(!resp.as[Entity].unsafeRunSync().entityName.isBlank)
   }
 
-  "GET /entities/nonexistent" should "respond with 404" in {
+  it should "respond with 404 for nonexistent id" in {
+    val resp = get(s"/v1/entities/0")
+    assert(resp.status === Status.NotFound)
+  }
+
+  it should "respond with 404 for alphanumeric id" in {
     val resp = get(s"/v1/entities/nonexistent")
     assert(resp.status === Status.NotFound)
   }

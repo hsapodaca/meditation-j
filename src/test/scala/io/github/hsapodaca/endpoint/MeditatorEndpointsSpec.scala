@@ -35,8 +35,8 @@ class MeditatorEndpointsSpec
     )
   }
 
-  s"GET /meditators/nonexistent" should "respond with 404" in {
-    val resp = get(s"/v1/meditators/nonexistent")
+  "GET /meditators/$id" should "respond with 404 to the nonexistent id" in {
+    val resp = get(s"/v1/meditators/0")
     assert(resp.status === NotFound)
   }
 
@@ -80,9 +80,9 @@ class MeditatorEndpointsSpec
     )
   }
 
-  s"DELETE /meditators" should "delete existing meditator" in {
+  "DELETE /meditators" should "delete existing meditator" in {
     val resp = post(
-      s"/v1/meditators",
+      "/v1/meditators",
       Meditator(
         Entity(None, "TestFriend", "Summary", "Script", EntityType.Friend),
         Entity(
@@ -106,7 +106,7 @@ class MeditatorEndpointsSpec
     }
   }
 
-  s"DELETE /meditators" should "not find a nonexistent meditator" in {
+  it should "not find a nonexistent meditator" in {
     val resp1 = delete(s"/v1/meditators/0")
     assert(resp1.status === NotFound)
   }
