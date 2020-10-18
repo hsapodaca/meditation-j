@@ -83,7 +83,7 @@ Meet J:
 - doobie-scalatest tests under `repository` in tests  - check sql, `endpoint` tests test endpoints.
 - Service layer has control over transactions.
 - Readiness check endpoint depends on database and seeded data.
-- Test coverage reports via scoverage plugin. '[80% and no less](https://www.artima.com/weblogs/viewpost.jsp?thread=204677)'.
+- Test coverage reports via scoverage plugin. Let there be more to life than ['80% and no less'](https://testing.googleblog.com/2010/07/code-coverage-goal-80-and-no-less.html)'.
 
 ## References
 - [http4s template](https://http4s.org/v0.21/)
