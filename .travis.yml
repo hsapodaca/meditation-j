@@ -3,5 +3,3 @@ scala:
    - 2.13.3
 services:
   - postgresql
-before_script:
-  - psql -c 'CREATE USER meditation WITH PASSWORD meditation;' -U postgres
