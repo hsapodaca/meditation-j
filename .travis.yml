@@ -4,4 +4,4 @@ scala:
 services:
   - postgresql
 before_script:
-  - psql -c 'CREATE USER meditation WITH PASSWORD 'meditation';' -U postgres
+  - psql -c 'CREATE USER meditation WITH PASSWORD meditation;' -U postgres
