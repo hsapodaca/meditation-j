@@ -80,6 +80,7 @@ J's meditation:
 * GET `/v1/entities/meditations`
 * GET `/v1/entities/meditations?pageSize=5&offset=0`
 * GET `/v1/entities/${id}/relationships`
+* GET `/v1/entities/${id}/script`
 * GET `/v1/relationships/${id}`
 * GET `/v1/meditators/${id}`
 
