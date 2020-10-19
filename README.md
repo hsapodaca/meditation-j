@@ -8,7 +8,7 @@
 
 J is someone who has helped me when it counted. If you are struggling to regain focus, they will guide you through a brief mindfulness meditation to help you relax. (Front-end forthcoming.)
 
-This is an evolving attempt to grow comfortable with the cats library and with building and maintaining a proof-of-concept service from scratch using Scala, functional programming concepts.
+This is an ongoing attempt to grow comfortable with the cats library and with building and maintaining a proof-of-concept service from scratch using Scala, functional programming concepts.
 
 ## Summary
 
