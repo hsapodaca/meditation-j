@@ -5,7 +5,7 @@ import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.syntax._
 import io.github.hsapodaca.alg.service.MeditatorService
-import io.github.hsapodaca.alg.{MeditatorNotFoundError, StatusInfo}
+import io.github.hsapodaca.alg.{Error, ErrorCode, StatusInfo}
 import org.http4s.HttpRoutes
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
@@ -28,7 +28,9 @@ class ReadinessCheckEndpoints[F[_]: Sync] {
               ).asJson
             )
           case None =>
-            NotFound("Pre-seeded data was not found.")
+            InternalServerError(
+              Error(ErrorCode.MD500, "Pre-seeded data was not found.").asJson
+            )
         }
     }
   }

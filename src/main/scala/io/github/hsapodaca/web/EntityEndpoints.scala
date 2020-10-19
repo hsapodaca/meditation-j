@@ -10,7 +10,9 @@ import io.github.hsapodaca.alg.service.EntityService
 import io.github.hsapodaca.alg.{
   Entity,
   EntityNotFoundError,
-  MeditatorNotFoundError
+  MeditatorNotFoundError,
+  Error,
+  ErrorCode
 }
 import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
@@ -33,16 +35,18 @@ class EntityEndpoints[F[_]: Sync] {
         } yield res
         action flatMap {
           case Some(entity) => Ok(entity.asJson)
-          case None         => NotFound("The entity was not found.")
+          case None =>
+            NotFound(Error(ErrorCode.MD404, "The entity was not found.").asJson)
         }
 
-      case GET -> Root / "v1" / "entities" / LongVar(id)/ "script" =>
+      case GET -> Root / "v1" / "entities" / LongVar(id) / "script" =>
         val action = for {
           res <- entityService.getNarrativeAndTransact(id)
         } yield res
         action flatMap {
           case Some(entity) => Ok(entity.asJson.deepDropNullValues)
-          case None         => NotFound("The entity was not found.")
+          case None =>
+            NotFound(Error(ErrorCode.MD404, "The entity was not found.").asJson)
         }
 
       case GET -> Root / "v1" / "entities" / "friends" :? PageSizeMatcher(
@@ -76,7 +80,9 @@ class EntityEndpoints[F[_]: Sync] {
         action flatMap {
           case Right(entity) => Ok(entity.asJson)
           case Left(EntityNotFoundError) =>
-            NotFound(s"The entity id $id is not found.")
+            NotFound(
+              Error(ErrorCode.MD404, "The entity id is not found.").asJson
+            )
         }
     }
   }

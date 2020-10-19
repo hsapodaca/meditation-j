@@ -1,5 +1,7 @@
 package io.github.hsapodaca.alg
 
+import java.time.LocalDateTime
+
 import enumeratum._
 
 case class Entity(
@@ -71,6 +73,16 @@ case class StatusInfo(
 
 case class Meditator(friend: Entity, meditation: Entity)
 
+case class Error(code: ErrorCode, title: String)
+sealed trait ErrorCode extends EnumEntry
+case object ErrorCode extends Enum[ErrorCode] with CirceEnum[ErrorCode] {
+  val values = findValues
+  case object MD400 extends ErrorCode
+  case object MD404 extends ErrorCode
+  case object MD500 extends ErrorCode
+  case object MD409 extends ErrorCode
+}
+
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable
 sealed trait MeditatorCreationError extends Product with Serializable
@@ -83,5 +95,8 @@ case object MeditatorEntityNamesMatchError
     extends ValidationError
     with MeditatorCreationError
 case object MeditatorAlreadyExistsError
+    extends ValidationError
+    with MeditatorCreationError
+case object MeditatorCreationFailedError
     extends ValidationError
     with MeditatorCreationError

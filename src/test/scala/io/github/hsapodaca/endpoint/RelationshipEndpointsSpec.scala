@@ -6,7 +6,10 @@ import io.circe.generic.auto._
 import io.github.hsapodaca.alg._
 import io.github.hsapodaca.endpoint.repos.{clearData, entities, relationships}
 import io.github.hsapodaca.web.{EntityEndpoints, RelationshipEndpoints}
-import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
+import org.http4s.circe.CirceEntityCodec.{
+  circeEntityDecoder,
+  circeEntityEncoder
+}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT

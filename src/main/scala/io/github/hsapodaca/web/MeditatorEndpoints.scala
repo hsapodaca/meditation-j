@@ -30,7 +30,8 @@ class MeditatorEndpoints[F[_]: Sync] {
         } yield res
         action.flatMap {
           case Some(t) => Ok(t.asJson)
-          case None    => NotFound(s"Meditator not found.")
+          case None =>
+            NotFound(Error(ErrorCode.MD404, "Meditator not found.").asJson)
         }
       }
 
@@ -42,11 +43,20 @@ class MeditatorEndpoints[F[_]: Sync] {
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
           case Left(MeditatorAlreadyExistsError) =>
-            Conflict(s"Meditator already exists.")
+            Conflict(Error(ErrorCode.MD409, "Meditator already exists.").asJson)
           case Left(MeditatorEntityNamesMatchError) =>
-            BadRequest(s"Meditation name and friend name should be unique.")
+            BadRequest(
+              Error(
+                ErrorCode.MD400,
+                "Meditation name and friend name should be unique."
+              ).asJson
+            )
           case Left(EntityAlreadyExistsError) =>
-            Conflict(s"Entity already exists.")
+            Conflict(Error(ErrorCode.MD409, "Entity already exists.").asJson)
+          case Left(MeditatorCreationFailedError) =>
+            InternalServerError(
+              Error(ErrorCode.MD500, "Meditator creation failed.").asJson
+            )
         }
 
       case DELETE -> Root / "v1" / "meditators" / LongVar(id) =>
@@ -56,7 +66,7 @@ class MeditatorEndpoints[F[_]: Sync] {
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
           case Left(MeditatorNotFoundError) =>
-            NotFound("Meditator was not found.")
+            NotFound(Error(ErrorCode.MD404, "Meditator was not found.").asJson)
         }
     }
   }

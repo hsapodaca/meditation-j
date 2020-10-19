@@ -14,6 +14,7 @@ class MeditatorService[F[_]](
 )(implicit
     ev: Bracket[F, Throwable]
 ) {
+
   def create(
       m: Meditator
   ): EitherT[F, MeditatorCreationError, Meditator] = {
@@ -40,7 +41,7 @@ class MeditatorService[F[_]](
       _ <- validation.doesNotExist(m)
       r <- EitherT.fromOptionF(
         action.transact(transactor),
-        MeditatorAlreadyExistsError: MeditatorCreationError
+        MeditatorCreationFailedError: MeditatorCreationError
       )
     } yield r
   }

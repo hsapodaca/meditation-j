@@ -32,7 +32,8 @@ class RelationshipEndpoints[F[_]: Sync] {
         } yield r
         action.flatMap {
           case Some(r) => Ok(r.asJson)
-          case None    => NotFound(s"Cannot find relationship.")
+          case None =>
+            NotFound(Error(ErrorCode.MD404, "Cannot find relationship.").asJson)
         }
 
       case GET -> Root / "v1" / "relationships" / LongVar(id) =>
@@ -41,7 +42,8 @@ class RelationshipEndpoints[F[_]: Sync] {
         } yield r
         action.flatMap {
           case Some(r) => Ok(r.asJson)
-          case None    => NotFound(s"Cannot find relationship.")
+          case None =>
+            NotFound(Error(ErrorCode.MD404, "Cannot find relationship.").asJson)
         }
     }
   }
