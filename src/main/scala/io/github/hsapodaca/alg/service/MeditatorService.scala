@@ -20,7 +20,7 @@ class MeditatorService[F[_]](
     val action = for {
       friendId <- entities.create(m.friend)
       meditationId <- entities.create(m.meditation)
-      _ <- relationships.create(
+      relationship <- relationships.create(
         EntityRelationship(
           None,
           friendId,
@@ -30,9 +30,9 @@ class MeditatorService[F[_]](
       )
       friend <- entities.get(friendId)
       meditation <- entities.get(meditationId)
-    } yield (friend, meditation) match {
-      case (Some(f), Some(m)) => Some(Meditator(f, m))
-      case _                  => None
+    } yield (friend, meditation, relationship) match {
+      case (Some(f), Some(m), Some(_)) => Some(Meditator(f, m))
+      case _                           => None
     }
 
     for {
