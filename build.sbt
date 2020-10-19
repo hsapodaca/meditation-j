@@ -17,6 +17,9 @@ lazy val root = (project in file("."))
     name := "meditation",
     version := "0.0.1-SNAPSHOT",
     scalaVersion := "2.13.3",
+    coverageEnabled := true,
+    coverageMinimum := 80,
+    coverageFailOnMinimum := true,
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-core" % CatsVersion,
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,

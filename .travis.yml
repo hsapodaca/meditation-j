@@ -1,20 +1,7 @@
 language: scala
-env:
-  global:
-    - CC_TEST_REPORTER_ID=815ff790d393105cd337cf0b7fbbfe1531d038806a8f590db0dc0403d6bd091b
+
 scala:
    - 2.13.3
 
 services:
   - postgresql
-
-before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
-
-script:
-  - sbt coverage test coverageReport
-
-after_script:
-  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
