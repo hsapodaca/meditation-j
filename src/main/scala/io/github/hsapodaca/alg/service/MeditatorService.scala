@@ -4,14 +4,7 @@ import cats.data.EitherT
 import cats.effect.Bracket
 import doobie.Transactor
 import doobie.implicits._
-import io.github.hsapodaca.alg.{
-  EntityRelationship,
-  EntityRelationshipType,
-  Meditator,
-  MeditatorAlreadyExistsError,
-  MeditatorNotFoundError,
-  MeditatorValidationAlg
-}
+import io.github.hsapodaca.alg._
 
 class MeditatorService[F[_]](
     entities: EntityService[F],
@@ -23,7 +16,7 @@ class MeditatorService[F[_]](
 ) {
   def create(
       m: Meditator
-  ): EitherT[F, MeditatorAlreadyExistsError.type, Meditator] = {
+  ): EitherT[F, MeditatorCreationError, Meditator] = {
     val action = for {
       friendId <- entities.create(m.friend)
       meditationId <- entities.create(m.meditation)
@@ -41,11 +34,13 @@ class MeditatorService[F[_]](
       case (Some(f), Some(m)) => Some(Meditator(f, m))
       case _                  => None
     }
+
     for {
+      _ <- validation.uniqueEntityNames(m)
       _ <- validation.doesNotExist(m)
       r <- EitherT.fromOptionF(
         action.transact(transactor),
-        MeditatorAlreadyExistsError
+        MeditatorAlreadyExistsError: MeditatorCreationError
       )
     } yield r
   }

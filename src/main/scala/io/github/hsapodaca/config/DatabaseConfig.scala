@@ -29,7 +29,6 @@ object DatabaseConfig {
       val flyway = {
         Flyway.configure().dataSource(db.url, db.user, db.password).load()
       }
-      flyway.clean()
       flyway.migrate()
       ()
     }

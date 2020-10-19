@@ -1,11 +1,15 @@
 package io.github.hsapodaca.endpoint
 
 import cats.effect.IO
+import cats.implicits.toSemigroupKOps
 import io.circe.generic.auto._
 import io.github.hsapodaca.alg._
-import io.github.hsapodaca.endpoint.repos.meditators
-import io.github.hsapodaca.web.MeditatorEndpoints
-import org.http4s.circe.CirceEntityCodec.{circeEntityDecoder, circeEntityEncoder}
+import io.github.hsapodaca.endpoint.repos.{entities, meditators}
+import io.github.hsapodaca.web.{EntityEndpoints, MeditatorEndpoints}
+import org.http4s.circe.CirceEntityCodec.{
+  circeEntityDecoder,
+  circeEntityEncoder
+}
 import org.http4s.client.dsl.Http4sClientDsl
 import org.http4s.dsl.Http4sDsl
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
@@ -62,12 +66,44 @@ class MeditatorEndpointsSpec
     assert(resp.status === Conflict)
   }
 
+  it should "not succeed in adding first entity record if adding second one fails" in {
+    val resp = post(
+      "/v1/meditators",
+      Meditator(
+        Entity(None, "SomeNonexistentEntity", "", "...", EntityType.Friend),
+        Entity(None, "J", "", "...", EntityType.Meditation)
+      )
+    )
+    assert(resp.status === Conflict)
+    val resp2 = get("/v1/entities/meditations").as[List[Entity]].unsafeRunSync()
+    assert(!resp2.map(_.entityName).contains("SomeNonexistentEntity"))
+  }
+
+  it should "not succeed in adding second entity record if adding first one fails" in {
+    val resp = post(
+      "/v1/meditators",
+      Meditator(
+        Entity(None, "SameNameTest", "", "...", EntityType.Friend),
+        Entity(None, "SameNameTest", "", "...", EntityType.Meditation)
+      )
+    )
+    assert(resp.status === BadRequest)
+    val resp2 = get("/v1/entities/meditations").as[List[Entity]].unsafeRunSync()
+    assert(!resp2.map(_.entityName).contains("SomeNonexistentEntity"))
+  }
+
   it should "succeed in creating a meditator (friend with meditation) record" in {
     val resp = post(
       "/v1/meditators",
       Meditator(
         Entity(None, "TestMeditatorFriend", "", "...", EntityType.Friend),
-        Entity(None, "TestMeditatorMeditation", "", "...", EntityType.Meditation)
+        Entity(
+          None,
+          "TestMeditatorMeditation",
+          "",
+          "...",
+          EntityType.Meditation
+        )
       )
     )
     assert(resp.status === Ok)
@@ -113,8 +149,9 @@ class MeditatorEndpointsSpec
 
   private[this] def get(s: String): Response[IO] = {
     val req = GET(Uri.unsafeFromString(s)).unsafeRunSync()
-    MeditatorEndpoints
-      .endpoints(meditators)
+    (MeditatorEndpoints
+      .endpoints(meditators) <+> EntityEndpoints
+      .endpoints(entities))
       .orNotFound(req)
       .unsafeRunSync()
   }

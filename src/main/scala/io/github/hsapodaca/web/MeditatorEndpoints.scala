@@ -11,6 +11,8 @@ import org.http4s.circe.{jsonOf, _}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{EntityDecoder, HttpRoutes}
 
+import scala.language.existentials
+
 class MeditatorEndpoints[F[_]: Sync] {
   val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
   import dsl._
@@ -41,6 +43,10 @@ class MeditatorEndpoints[F[_]: Sync] {
           case Right(entity) => Ok(entity.asJson)
           case Left(MeditatorAlreadyExistsError) =>
             Conflict(s"Meditator already exists.")
+          case Left(MeditatorEntityNamesMatchError) =>
+            BadRequest(s"Meditation name and friend name should be unique.")
+          case Left(EntityAlreadyExistsError) =>
+            Conflict(s"Entity already exists.")
         }
 
       case DELETE -> Root / "v1" / "meditators" / LongVar(id) =>
@@ -50,7 +56,7 @@ class MeditatorEndpoints[F[_]: Sync] {
         action.flatMap {
           case Right(entity) => Ok(entity.asJson)
           case Left(MeditatorNotFoundError) =>
-            NotFound(s"Meditator was not found.")
+            NotFound("Meditator was not found.")
         }
     }
   }

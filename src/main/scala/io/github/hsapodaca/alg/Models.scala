@@ -73,8 +73,15 @@ case class Meditator(friend: Entity, meditation: Entity)
 
 // Validation Errors
 sealed trait ValidationError extends Product with Serializable
+sealed trait MeditatorCreationError extends Product with Serializable
 case object MeditatorNotFoundError extends ValidationError
-case object EntityAlreadyExistsError extends ValidationError
+case object EntityAlreadyExistsError
+    extends ValidationError
+    with MeditatorCreationError
 case object EntityNotFoundError extends ValidationError
-case object MeditatorAlreadyExistsError extends ValidationError
-case object UnprocessableNarrativeScriptError extends ValidationError
+case object MeditatorEntityNamesMatchError
+    extends ValidationError
+    with MeditatorCreationError
+case object MeditatorAlreadyExistsError
+    extends ValidationError
+    with MeditatorCreationError

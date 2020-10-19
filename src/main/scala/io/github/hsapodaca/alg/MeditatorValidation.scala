@@ -4,15 +4,15 @@ import cats.Applicative
 import cats.data.EitherT
 import cats.effect.Bracket
 import cats.syntax.all._
-import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
 
 class MeditatorValidation[F[_]](
-                              repository: EntityRepositoryAlg[F],
-                              transactor: Transactor[F]
+    repository: EntityRepositoryAlg[F],
+    transactor: Transactor[F]
 )(implicit ev: Bracket[F, Throwable])
     extends MeditatorValidationAlg[F] {
+
   override def doesNotExist(
       m: Meditator
   ): EitherT[F, MeditatorAlreadyExistsError.type, Unit] = {
@@ -23,11 +23,30 @@ class MeditatorValidation[F[_]](
       } yield (f, m) match {
         case (Some(_), _) => Left(MeditatorAlreadyExistsError)
         case (_, Some(_)) => Left(MeditatorAlreadyExistsError)
-        case _       => Right(())
+        case _            => Right(())
       }
     }
     action.transact(transactor)
   }
+
+  def uniqueEntityNames(
+      meditator: Meditator
+  ): EitherT[F, MeditatorEntityNamesMatchError.type, Unit] =
+    EitherT {
+      (
+        meditator.meditation.entityName.toLowerCase,
+        meditator.friend.entityName.toLowerCase
+      ) match {
+        case (m, f) if m == f =>
+          Either
+            .left[MeditatorEntityNamesMatchError.type, Unit](
+              MeditatorEntityNamesMatchError
+            )
+            .pure[F]
+        case _ =>
+          Either.right[MeditatorEntityNamesMatchError.type, Unit](()).pure[F]
+      }
+    }
 
   override def exists(
       entityId: Option[Long]
@@ -53,8 +72,8 @@ class MeditatorValidation[F[_]](
 
 object MeditatorValidation {
   def apply[F[_]: Applicative](
-                                repository: EntityRepositoryAlg[F],
-                                transactor: Transactor[F]
+      repository: EntityRepositoryAlg[F],
+      transactor: Transactor[F]
   )(implicit ev: Bracket[F, Throwable]) =
     new MeditatorValidation[F](repository, transactor)
 }
