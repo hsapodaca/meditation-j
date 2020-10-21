@@ -93,7 +93,7 @@ class MeditatorEndpointsSpec
   }
 
   it should "succeed in creating multiple meditator (friend with meditation) records" in {
-    for { num <- 1 to 10 } {
+    for { num <- 1 to 3 } {
       val resp = post(
         "/v1/meditators",
         Meditator(
