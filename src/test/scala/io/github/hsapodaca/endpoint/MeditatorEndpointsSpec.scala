@@ -92,28 +92,36 @@ class MeditatorEndpointsSpec
     assert(!resp2.map(_.entityName).contains("SomeNonexistentEntity"))
   }
 
-  it should "succeed in creating a meditator (friend with meditation) record" in {
-    val resp = post(
-      "/v1/meditators",
-      Meditator(
-        Entity(None, "TestMeditatorFriend", "", "...", EntityType.Friend),
-        Entity(
-          None,
-          "TestMeditatorMeditation",
-          "",
-          "...",
-          EntityType.Meditation
+  it should "succeed in creating multiple meditator (friend with meditation) records" in {
+    for { num <- 1 to 10 } {
+      val resp = post(
+        "/v1/meditators",
+        Meditator(
+          Entity(
+            None,
+            s"TestMeditatorFriend$num",
+            "",
+            "...",
+            EntityType.Friend
+          ),
+          Entity(
+            None,
+            s"TestMeditatorMeditation$num",
+            "",
+            "...",
+            EntityType.Meditation
+          )
         )
       )
-    )
-    assert(resp.status === Ok)
-    assert(
-      resp
-        .as[Meditator]
-        .unsafeRunSync()
-        .meditation
-        .entityName === "TestMeditatorMeditation"
-    )
+      assert(resp.status === Ok)
+      assert(
+        resp
+          .as[Meditator]
+          .unsafeRunSync()
+          .meditation
+          .entityName === s"TestMeditatorMeditation$num"
+      )
+    }
   }
 
   "DELETE /meditators" should "delete existing meditator" in {
