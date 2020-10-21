@@ -48,10 +48,10 @@ are positive or negative, pleasurable or painful.
 [Pause 3 seconds.]
 Even if they are the most wonderful thoughts,
 place them on a leaf and let them float by.
-[Pause 5 seconds.]
+[Pause 5 seconds]
 If your thoughts stop, just watch the stream.
 Sooner or later your thoughts should start up again.
-[Pause 5 seconds.]
+[Pause 5 seconds]
 Allow the stream to flow at its own rate.
 [Pause 3 seconds.]
 Notice any urges to speed up or slow down the stream,
@@ -68,8 +68,8 @@ there is no need to force the leaf down the stream.
 If you find yourself getting caught up with a thought or feeling,
 such as boredom or impatience,
 simply acknowledge it.
-Say to yourself, “Here’s a feeling of boredom,”
-or “Here’s a feeling of impatience.”
+Say to yourself: here is a feeling of boredom,
+or: here is a feeling of impatience.
 Then place those words on a leaf,
 and let them float on by.
 [Pause five seconds.]

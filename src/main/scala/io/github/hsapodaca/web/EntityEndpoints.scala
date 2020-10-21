@@ -41,8 +41,8 @@ class EntityEndpoints[F[_]: Sync] {
 
       case GET -> Root / "v1" / "entities" / LongVar(id) / "script" =>
         val action = for {
-          res <- entityService.getNarrativeAndTransact(id)
-        } yield res
+          entity <- entityService.getNarrativeAndTransact(id)
+        } yield entity
         action flatMap {
           case Some(entity) => Ok(entity.asJson.deepDropNullValues)
           case None =>

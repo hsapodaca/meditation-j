@@ -11,15 +11,15 @@ import io.github.hsapodaca.alg.{
   EntityRepositoryAlg,
   EntityType,
   EntityValidationAlg,
-  Script,
-  NarrativeTranslationAlg
+  NarrativeTranslationAlg,
+  Script
 }
 
 class EntityService[F[_]](
-                           repository: EntityRepositoryAlg[F],
-                           validation: EntityValidationAlg[F],
-                           narrative: NarrativeTranslationAlg[F],
-                           transactor: Transactor[F]
+    repository: EntityRepositoryAlg[F],
+    validation: EntityValidationAlg[F],
+    narrative: NarrativeTranslationAlg[F],
+    transactor: Transactor[F]
 )(implicit F: Bracket[F, Throwable]) {
 
   def get(id: Long): ConnectionIO[Option[Entity]] =
@@ -51,7 +51,10 @@ class EntityService[F[_]](
   def getNarrativeAndTransact(id: Long): F[Option[Script]] = {
     val action = for {
       e <- repository.get(id)
-    } yield narrative.generate(e)
+    } yield e match {
+      case Some(e) => Some(Script(narrative.parse(e)))
+      case None    => None
+    }
     action.transact(transactor)
   }
 
@@ -81,10 +84,10 @@ class EntityService[F[_]](
 
 object EntityService {
   def apply[F[_]](
-                   repository: EntityRepositoryAlg[F],
-                   validation: EntityValidationAlg[F],
-                   narrative: NarrativeTranslationAlg[F],
-                   transactor: Transactor[F]
+      repository: EntityRepositoryAlg[F],
+      validation: EntityValidationAlg[F],
+      narrative: NarrativeTranslationAlg[F],
+      transactor: Transactor[F]
   )(implicit ev: Bracket[F, Throwable]): EntityService[F] =
     new EntityService[F](repository, validation, narrative, transactor)
 }

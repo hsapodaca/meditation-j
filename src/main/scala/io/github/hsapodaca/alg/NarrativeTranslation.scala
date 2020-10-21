@@ -18,23 +18,19 @@ class NarrativeTranslation[F[_]] extends NarrativeTranslationAlg[F] {
     10 -> "ten"
   )
 
-  override def generate(e: Option[Entity]): Option[Script] =
-    e.map(i =>
-      Script {
-        parse(i.script)
-      }
-    )
-
-  override def parse(s: String): List[Action] =
-    s.split(System.lineSeparator())
+  override def parse(e: Entity): List[Action] =
+    e.script
+      .split(System.lineSeparator())
       .toList
       .map {
-        case pauseSeconds(p) => Action(ActionType.Pause, Some(p.toInt), None)
+        case pauseSeconds(p) =>
+          Action(ActionType.Pause, Some(p.toInt), None)
         case pauseSecondsWords(p) =>
           val num = numbers.find(_._2 == p.toLowerCase).map(_._1)
           Action(ActionType.Pause, num, None)
-        case s if s.matches(pause) => Action(ActionType.Pause, Some(1), None)
-        case s                     => Action(ActionType.Speech, None, Some(s))
+        case s if s.matches(pause) =>
+          Action(ActionType.Pause, Some(1), None)
+        case s => Action(ActionType.Speech, None, Some(s))
       }
 }
 

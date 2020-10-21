@@ -9,10 +9,17 @@ class ScriptTranslationSpec extends AnyFlatSpec with Matchers {
   val narrative = NarrativeTranslation[IO]
 
   "narrative generator" should "not parse pause instructions if there is no pause" in {
-    val actions = narrative.parse("""Test
-        |test2
-        |test2
-        |""".stripMargin)
+    val e = Entity(
+      None,
+      "",
+      "",
+      """Test
+      |test2
+      |test2
+      |""".stripMargin,
+      EntityType.Meditation
+    )
+    val actions = narrative.parse(e)
     assert(actions.size === 3)
     actions.foreach { a =>
       assert(a.`type` === ActionType.Speech)
@@ -28,15 +35,17 @@ class ScriptTranslationSpec extends AnyFlatSpec with Matchers {
     )
   ) {
     it should s"parse $input" in {
-      assert(narrative.parse(input).head.`type` === ActionType.Pause)
-      assert(narrative.parse(input).head.waitFor === Some(expected))
+      val entity = Entity(None, "", "", input, EntityType.Friend)
+      assert(narrative.parse(entity).head.`type` === ActionType.Pause)
+      assert(narrative.parse(entity).head.waitFor === Some(expected))
     }
   }
 
   it should s"parse text" in {
-    assert(narrative.parse("test").head.`type` === ActionType.Speech)
-    assert(narrative.parse("test").head.waitFor === None)
-    assert(narrative.parse("test").head.text === Some("test"))
+    val e = Entity(None, "", "", "test", EntityType.Friend)
+    val resp = narrative.parse(e)
+    assert(resp.head.`type` === ActionType.Speech)
+    assert(resp.head.waitFor === None)
+    assert(resp.head.text === Some("test"))
   }
-
 }
