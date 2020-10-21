@@ -10,21 +10,21 @@ private object EntitySQL {
 
   def select(id: Long): Query0[Entity] =
     sql"""
-    SELECT id, entity_name, summary, script, type
+    SELECT id, name, summary, script, type
     FROM entities
     WHERE id = $id
     """.query[Entity]
 
   def select(name: String): Query0[Entity] =
     sql"""
-    SELECT id, entity_name, summary, script, type
+    SELECT id, name, summary, script, type
     FROM entities
-    WHERE entity_name = $name
+    WHERE name = $name
     """.query[Entity]
 
   def select(entityType: EntityType, limit: Int, offset: Int): Query0[Entity] =
     sql"""
-    SELECT id, entity_name, summary, script, type
+    SELECT id, name, summary, script, type
     FROM entities
     WHERE type = ${entityType}
     LIMIT ${limit.toLong} OFFSET ${offset.toLong}
@@ -32,15 +32,15 @@ private object EntitySQL {
 
   def selectByParentId(id: Long): Query0[Entity] =
     sql"""
-    SELECT e.id, e.entity_name, e.summary, e.script, e.type
+    SELECT e.id, e.name, e.summary, e.script, e.type
     FROM entity_relationships er JOIN entities e on er.target_entity_id = e.id
     WHERE er.primary_entity_id = $id
     """.query[Entity]
 
   def insertValues(m: Entity): Update0 =
     sql"""
-    INSERT INTO entities (entity_name, summary, script, type)
-    VALUES (${m.entityName}, ${m.summary}, ${m.script}, ${m.`type`})
+    INSERT INTO entities (name, summary, script, type)
+    VALUES (${m.name}, ${m.summary}, ${m.script}, ${m.`type`})
     """.update
 
   def deleteFrom(id: Long): Update0 =
@@ -52,7 +52,7 @@ private object EntitySQL {
   def updateValues(id: Long, m: Entity): Update0 =
     sql"""
     UPDATE entities
-    SET entity_name = ${m.entityName}, summary = ${m.summary}, script = ${m.script}
+    SET name = ${m.name}, summary = ${m.summary}, script = ${m.script}
     WHERE id = $id
     """.update
 }

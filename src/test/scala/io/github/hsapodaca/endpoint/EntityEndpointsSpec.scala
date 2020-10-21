@@ -39,7 +39,7 @@ class EntityEndpointsSpec
     s"GET /entities/$item" should "respond with 200 and a list of entities" in {
       val resp = get(s"/v1/entities/$item")
       assert(resp.status === Status.Ok)
-      assert(!resp.as[List[Entity]].unsafeRunSync().head.entityName.isBlank)
+      assert(!resp.as[List[Entity]].unsafeRunSync().head.name.isBlank)
       assert(
         resp.as[List[Entity]].unsafeRunSync().head.`type`.toString === itemType
       )
@@ -48,7 +48,7 @@ class EntityEndpointsSpec
     s"GET /entities/$item" should "paginate until the end of content" in {
       val resp = get(s"/v1/entities/$item?pageSize=1&offset=0")
       assert(resp.status === Status.Ok)
-      assert(!resp.as[List[Entity]].unsafeRunSync().head.entityName.isBlank)
+      assert(!resp.as[List[Entity]].unsafeRunSync().head.name.isBlank)
       val resp2 = get(s"/v1/entities/$item?pageSize=10&offset=2")
       assert(resp2.status === Status.Ok)
       assert(resp2.as[List[Entity]].unsafeRunSync() === List())
@@ -58,7 +58,7 @@ class EntityEndpointsSpec
   "GET /entities/id" should "respond with 200 and an entity" in {
     val resp = get(s"/v1/entities/1")
     assert(resp.status === Status.Ok)
-    assert(!resp.as[Entity].unsafeRunSync().entityName.isBlank)
+    assert(!resp.as[Entity].unsafeRunSync().name.isBlank)
   }
 
   it should "respond with 404 for nonexistent id" in {
@@ -115,7 +115,7 @@ class EntityEndpointsSpec
 
     val resp3 = get(s"/v1/entities/$id")
     assert(resp3.status === Status.Ok)
-    assert(resp3.as[Entity].unsafeRunSync().entityName !== "editedEntity")
+    assert(resp3.as[Entity].unsafeRunSync().name !== "editedEntity")
     assert(resp3.as[Entity].unsafeRunSync().summary === "editedSummary")
     assert(resp3.as[Entity].unsafeRunSync().script === "editedScript")
     assert(resp3.as[Entity].unsafeRunSync().`type` === EntityType.Meditation)

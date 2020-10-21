@@ -1,12 +1,12 @@
 -- J, first entity
-insert into entities (entity_name, summary, script, type)
+insert into entities (name, summary, script, type)
 values ('J', 'J is someone who has helped me once, when it mattered. If you are struggling, they will guide you through a brief mindfulness meditation to help you relax.','Hi, my name is J.
 [Pause.]
 How are you today?
 [Pause.]
 I would like to walk you through a brief exercise to help you relax.', 'Friend');
 
-insert into entities (entity_name, summary, script, type)
+insert into entities (name, summary, script, type)
 values ('Leaves on a Stream', 'This is a brief mindfulness meditation exercise to help you relax. It involves visualizing a stream of water and helps you let go of thoughts that might be stressful or overwhelming.',
 'I invite you to sit in a comfortable yet upright position in your chair
 with your feet flat on the floor,

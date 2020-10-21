@@ -30,7 +30,7 @@ class EntityQueryTypeCheckSpec
   test("Check entity queries") {
     entity.arbitrary.sample.map { e =>
       check(select(e.id.getOrElse(1L)))
-      check(select(e.entityName))
+      check(select(e.name))
       List(EntityType.Friend, EntityType.Meditation).foreach { t =>
         check(select(t, 0, 0))
         check(select(t, 10, 100))

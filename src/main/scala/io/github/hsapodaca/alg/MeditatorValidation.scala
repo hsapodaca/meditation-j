@@ -18,8 +18,8 @@ class MeditatorValidation[F[_]](
   ): EitherT[F, MeditatorAlreadyExistsError.type, Unit] = {
     val action = EitherT {
       for {
-        f <- repository.get(m.friend.entityName)
-        m <- repository.get(m.meditation.entityName)
+        f <- repository.get(m.friend.name)
+        m <- repository.get(m.meditation.name)
       } yield (f, m) match {
         case (Some(_), _) => Left(MeditatorAlreadyExistsError)
         case (_, Some(_)) => Left(MeditatorAlreadyExistsError)
@@ -34,8 +34,8 @@ class MeditatorValidation[F[_]](
   ): EitherT[F, MeditatorEntityNamesMatchError.type, Unit] =
     EitherT {
       (
-        meditator.meditation.entityName.toLowerCase,
-        meditator.friend.entityName.toLowerCase
+        meditator.meditation.name.toLowerCase,
+        meditator.friend.name.toLowerCase
       ) match {
         case (m, f) if m == f =>
           Either

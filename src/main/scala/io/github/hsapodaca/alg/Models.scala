@@ -1,12 +1,10 @@
 package io.github.hsapodaca.alg
 
-import java.time.LocalDateTime
-
 import enumeratum._
 
 case class Entity(
     id: Option[Long],
-    entityName: String,
+    name: String,
     summary: String,
     script: String,
     `type`: EntityType

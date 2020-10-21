@@ -1,11 +1,11 @@
 -- Scripted entities
 create TABLE entities(
   id BIGSERIAL primary key not null,
-  entity_name TEXT not null,
+  name TEXT not null,
   summary TEXT not null,
   type VARCHAR(30) not null,
   script text not null,
-  UNIQUE(entity_name)
+  UNIQUE(name)
 );
 create INDEX entities_type_index ON entities(type);
 

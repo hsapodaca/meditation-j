@@ -23,8 +23,8 @@ class ReadinessCheckEndpoints[F[_]: Sync] {
           case Some(mr) =>
             Ok(
               StatusInfo(
-                friend = mr.friend.entityName,
-                meditation = mr.meditation.entityName
+                friend = mr.friend.name,
+                meditation = mr.meditation.name
               ).asJson
             )
           case None =>

@@ -29,9 +29,9 @@ package object repos {
   def clearData = {
     val allFriends = entities.listFriends(10000, 0).unsafeRunSync()
     val allMeditations = entities.listMeditations(10000, 0).unsafeRunSync()
-    val seededFriends = allFriends.filter(_.entityName == "J")
+    val seededFriends = allFriends.filter(_.name == "J")
     val seededMeditations =
-      allMeditations.filter(_.entityName == "Leaves on a Stream")
+      allMeditations.filter(_.name == "Leaves on a Stream")
 
     val seededEntityIds = (seededFriends ++ seededMeditations).map(_.id)
 

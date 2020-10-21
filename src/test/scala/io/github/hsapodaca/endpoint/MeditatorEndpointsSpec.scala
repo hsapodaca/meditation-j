@@ -28,13 +28,13 @@ class MeditatorEndpointsSpec
   s"GET /meditators/id" should "respond with 200 and a body" in {
     val resp = get(s"/v1/meditators/1")
     assert(resp.status === Ok)
-    assert(resp.as[Meditator].unsafeRunSync().friend.entityName === "J")
+    assert(resp.as[Meditator].unsafeRunSync().friend.name === "J")
     assert(
       resp
         .as[Meditator]
         .unsafeRunSync()
         .meditation
-        .entityName
+        .name
         .startsWith("Leaves")
     )
   }
@@ -76,7 +76,7 @@ class MeditatorEndpointsSpec
     )
     assert(resp.status === Conflict)
     val resp2 = get("/v1/entities/meditations").as[List[Entity]].unsafeRunSync()
-    assert(!resp2.map(_.entityName).contains("SomeNonexistentEntity"))
+    assert(!resp2.map(_.name).contains("SomeNonexistentEntity"))
   }
 
   it should "not succeed in adding second entity record if adding first one fails" in {
@@ -89,7 +89,7 @@ class MeditatorEndpointsSpec
     )
     assert(resp.status === BadRequest)
     val resp2 = get("/v1/entities/meditations").as[List[Entity]].unsafeRunSync()
-    assert(!resp2.map(_.entityName).contains("SomeNonexistentEntity"))
+    assert(!resp2.map(_.name).contains("SomeNonexistentEntity"))
   }
 
   it should "succeed in creating multiple meditator (friend with meditation) records" in {
@@ -119,7 +119,7 @@ class MeditatorEndpointsSpec
           .as[Meditator]
           .unsafeRunSync()
           .meditation
-          .entityName === s"TestMeditatorMeditation$num"
+          .name === s"TestMeditatorMeditation$num"
       )
     }
   }
