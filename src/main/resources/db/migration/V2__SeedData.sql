@@ -1,97 +1,73 @@
 -- J, first entity
 insert into entities (name, summary, script, type)
-values ('J', 'J is someone who has helped me once, when it mattered. If you are struggling, they will guide you through a brief mindfulness meditation to help you relax.','Hi, my name is J.
+values ('J', 'J is someone who has helped me once. If you are struggling with stress, they will guide you through a breathing exercise to help you relax.','Hi, my name is J.
 [Pause.]
 How are you today?
 [Pause.]
 I would like to walk you through a brief exercise to help you relax.', 'Friend');
 
 insert into entities (name, summary, script, type)
-values ('Leaves on a Stream', 'This is a brief mindfulness meditation exercise to help you relax. It involves visualizing a stream of water and helps you let go of thoughts that might be stressful or overwhelming.',
-'I invite you to sit in a comfortable yet upright position in your chair
-with your feet flat on the floor,
-your arms and legs uncrossed,
-and your hands resting in your lap.
+values ('Three Deep Breaths', 'This is a breathing exercise to help you relax in a stressful situation.',
+'Hello.
+[Pause.]
+Today we will try a simple breathing exercise.
+[Pause two seconds.]
+Allow your body to settle into a comfortable position.
+[Pause.]
+You may keep your eyes open slightly.
+[Pause.]
+Focus on these words and allow them to be.
+[Pause 2 seconds.]
+Breathe in the deepest breath you had to take today.
+[Pause one second].
+In...
 [Pause 3 seconds.]
-Let your eyes gently close,
-or fix them on a point in front of you.
-[Pause 5 seconds.]
-Take a couple of gentle breaths in...
-[Pause 1 second]
-... and out.
+And out.
+[Pause.]
+Allow your spine to straighten and your shoulders to fall back.
+[Pause 3 seconds.]
+Today we will practice breathing.
+[Pause.]
+Start by breathing in gently...
+[Pause.]
+Focus on the sensation of air passing over your nosrils.
+[Pause 2 seconds.]
+Notice the air in your chest and belly.
+[Pause.]
+Notice the inhale end.
+[Pause.]
+Notice the sensations in the body as the slow exhale begins.
+[Pause 3 seconds.]
+And rest.
+[Pause.]
+Let us begin again.
 [Pause 1 second.]
-Notice the sound and feel of your own breath
-as you breathe in...
-[Pause one second]
-... and out.
-[Pause 5 seconds.]
-Now, I’d like you to imagine that you are standing by the shore
-of a gently flowing stream and you are watching the water flow.
-[Pause 3 seconds.]
-Imagine feeling the ground beneath you,
-the sounds of the water flowing past,
-and the way the stream looks as you watch it.
-[Pause 5 seconds.]
-Imagine that there are leaves from trees,
-of all different shapes, sizes, and colors,
-floating past on the stream...
-and you are just watching these float on the stream.
-This is all you need to do for the time being.
-[Pause 5 seconds.]
-Start to become aware of your thoughts, feelings, or sensations.
-[Pause 3 seconds.]
-Each time you notice a thought, feeling, or sensation,
-imagine placing it on a leaf and letting it float down the stream.
-[Pause 5 seconds.]
-Do this regardless of whether the thoughts, feelings, or sensations
-are positive or negative, pleasurable or painful.
-[Pause 3 seconds.]
-Even if they are the most wonderful thoughts,
-place them on a leaf and let them float by.
-[Pause 5 seconds]
-If your thoughts stop, just watch the stream.
-Sooner or later your thoughts should start up again.
-[Pause 5 seconds]
-Allow the stream to flow at its own rate.
-[Pause 3 seconds.]
-Notice any urges to speed up or slow down the stream,
-and let these be on leaves as well.
-Observe the stream flow on its own and let it be.
-[Pause 5 seconds.]
-If you have thoughts, feelings, or sensations about doing this exercise,
-place these on leaves as well.
-[Pause 5 seconds.]
-If a leaf gets stuck or will not go away, let it hang around.
-For a little while, all you are doing is observing this experience;
-there is no need to force the leaf down the stream.
-[Pause 5 seconds.]
-If you find yourself getting caught up with a thought or feeling,
-such as boredom or impatience,
-simply acknowledge it.
-Say to yourself: here is a feeling of boredom,
-or: here is a feeling of impatience.
-Then place those words on a leaf,
-and let them float on by.
-[Pause five seconds.]
-You are just observing each experience and placing it on a leaf on the stream.
-It is normal and natural to lose track of this exercise, and it will keep happening.
-When you notice yourself losing track,
-just bring yourself back to watching the leaves on the stream.
-[Pause ten seconds.]
-Notice the stream, and place any thoughts, feelings, or sensations on the leaves
-and let them gently float down the stream.
-[Pause five seconds.]
-Finally, allow the image of the stream to dissolve,
-and slowly bring your attention back to sitting in the chair,
-in this room.
+Gentle, slow inhale keeping your attention on the air. In...
+[Pause 2 seconds.]
+And out.
 [Pause.]
-Gently open your eyes and notice what you can see.
-Notice what you can hear.
-Bring your awareness to the present moment.
-Push your feet into the floor and have a stretch.
-Notice yourself stretching.
-Notice yourself taking a deep breath.
+We will continue one more time.
 [Pause.]
-Welcome back.', 'Meditation');
+In.
+[Pause 3 seconds.]
+And out.
+[Pause 2 seconds.]
+And again.
+[Pause.]
+.....
+[Pause 10 seconds.]
+....
+[Pause 10 seconds.]
+...
+[Pause 10 seconds.]
+..
+[Pause 10 seconds.]
+.
+[Pause 10 seconds.]
+
+[Pause 5 seconds.]
+And gently focus on your surroundings.
+[Pause.]
+Welcome back, friend.', 'Meditation');
 
 insert into entity_relationships (primary_entity_id, target_entity_id, type) values (1, 2, 'FriendHasMeditation');

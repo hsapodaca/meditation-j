@@ -80,9 +80,7 @@ class EntityEndpointsSpec
         .unsafeRunSync()
         .steps
         .head
-        .text === Some(
-        "I invite you to sit in a comfortable yet upright position in your chair"
-      )
+        .text === Some("Hello.")
     )
   }
 

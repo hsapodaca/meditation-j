@@ -9,6 +9,8 @@ import io.github.hsapodaca.repository.db.testTransactor
 import io.github.hsapodaca.repository.{EntityRepository, RelationshipRepository}
 
 package object repos {
+  val defaultFriend = "J"
+  val defaultMeditation = "Three Deep Breaths"
   val transactor: Transactor[IO] = testTransactor
   val entityRepo = EntityRepository[IO]
   val relationshipRepo = RelationshipRepository[IO]
@@ -29,9 +31,9 @@ package object repos {
   def clearData = {
     val allFriends = entities.listFriends(10000, 0).unsafeRunSync()
     val allMeditations = entities.listMeditations(10000, 0).unsafeRunSync()
-    val seededFriends = allFriends.filter(_.name == "J")
+    val seededFriends = allFriends.filter(_.name == defaultFriend)
     val seededMeditations =
-      allMeditations.filter(_.name == "Leaves on a Stream")
+      allMeditations.filter(_.name == defaultMeditation)
 
     val seededEntityIds = (seededFriends ++ seededMeditations).map(_.id)
 

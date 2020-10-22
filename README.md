@@ -35,7 +35,7 @@ And confirm status
     curl http://localhost:8080/status | jq
     {
       "status": "Up",
-      "meditation": "Leaves on a Stream",
+      "meditation": "Three Deep Breaths",
       "friend": "J"
     }    
     
@@ -51,23 +51,23 @@ J's meditation:
       "steps": [
         {
           "type": "Speech",
-          "text": "I invite you to sit in a comfortable yet upright position in your chair"
-        },
-        {
-          "type": "Speech",
-          "text": "with your feet flat on the floor,"
-        },
-        {
-          "type": "Speech",
-          "text": "your arms and legs uncrossed,"
-        },
-        {
-          "type": "Speech",
-          "text": "and your hands resting in your lap."
+          "text": "Hello."
         },
         {
           "type": "Pause",
-          "waitFor": 3
+          "waitFor": 1
+        },
+        {
+          "type": "Speech",
+          "text": "Today we will try a simple breathing exercise."
+        },
+        {
+          "type": "Pause",
+          "waitFor": 2
+        },
+        {
+          "type": "Speech",
+          "text": "Allow your body to settle into a comfortable position."
         }
 
 
@@ -99,7 +99,7 @@ J's meditation:
 
 ## Data Model
 ### Summary
-- Everything is an entity with a script.
+- Everything is an entity with an associated script.
 - Pairs of entities have one-directional relationships. (Meditator = friend -> meditation)
 - Scripts are plaintext: each line is a step, either `Speech` or `Pause`. Pauses track how many seconds to pause for.
   - `[Pause.]` *(for 1 second default)*

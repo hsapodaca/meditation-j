@@ -35,7 +35,7 @@ class MeditatorEndpointsSpec
         .unsafeRunSync()
         .meditation
         .name
-        .startsWith("Leaves")
+        .startsWith("Three")
     )
   }
 
